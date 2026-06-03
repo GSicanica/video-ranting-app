@@ -1,0 +1,74 @@
+# Git Attributes for YouTube Rating App
+# Prevents accidentally committing large binary files
+
+# Binary files (mark as binary to prevent git from trying to diff them)
+*.apk binary
+*.aab binary
+*.ipa binary
+*.framework binary
+*.xcframework binary
+*.so binary
+*.dylib binary
+*.a binary
+*.jar binary
+*.aar binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+
+# Videos
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.mkv binary
+
+# Archives
+*.zip binary
+*.tar.gz binary
+*.rar binary
+*.7z binary
+
+# Databases
+*.db binary
+*.sqlite binary
+*.realm binary
+
+# Prevent large files from being committed
+# (Note: This doesn't actually prevent commits, but helps with diffs)
+*.apk -diff
+*.aab -diff
+*.framework -diff
+*.xcframework -diff
+*.so -diff
+*.dylib -diff
+
+# Text files should use LF line endings
+*.kt text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.gradle text eol=lf
+*.kts text eol=lf
+*.properties text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.sh text eol=lf
+
+# Swift files
+*.swift text eol=lf
+
+# HTML/CSS/JS
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.php text eol=lf
+
+# Config files
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf

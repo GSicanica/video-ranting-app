@@ -1,0 +1,18 @@
+<idea-plugin>
+    <id>com.moduleguard</id>
+    <name>ModuleGuard</name>
+    <version>0.1.0</version>
+    <vendor email="dev@moduleguard" url="https://example.com">ModuleGuard</vendor>
+
+    <description><![CDATA[
+        Enforces module dependency rules and highlights violations in Gradle Kotlin DSL.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="ModuleGuard" factoryClass="com.moduleguard.ModuleGuardToolWindowFactory" anchor="right" />
+    </extensions>
+
+    <applicationListeners>
+    </applicationListeners>
+</idea-plugin>

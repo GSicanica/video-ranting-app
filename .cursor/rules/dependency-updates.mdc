@@ -1,0 +1,17 @@
+---
+description: Dependency update rules
+globs:
+  - "gradle/libs.versions.toml"
+  - "**/*.gradle.kts"
+alwaysApply: false
+---
+
+# Dependency Updates
+
+- Add or update dependency versions only in `gradle/libs.versions.toml`.
+- Prefer bundles for repeated dependency groups.
+- Keep Gradle convention plugins in `build-logic` as the place for shared module defaults.
+- After updates, run the narrow affected build first, then `./gradlew productionArchitectureCheck`.
+- For Kotlin, Compose, AGP, KSP/KAPT, Room, Koin, Sentry, Media3, and Ktor updates, verify Android compile tasks because these dependencies affect generated code or runtime startup.
+- Do not introduce a new DI, navigation, networking, image, or database library without documenting why existing project choices are insufficient.
+

@@ -1,0 +1,108 @@
+# Build output
+build/
+**/build/
+/.kotlin/
+/.gradle/
+**/.gradle/
+/.gradle-local/
+!.gradle/wrapper/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration and secrets
+local.properties
+**/local.properties
+key.properties
+**/key.properties
+secrets.properties
+**/secrets.properties
+api-keys.properties
+**/api-keys.properties
+kotzilla.json
+kotzilla.key
+**/kotzilla.json
+**/kotzilla.key
+*.jks
+*.keystore
+*.auth_token
+
+# Private/server-side code kept out of the public GitHub repo
+/BACKEND/
+/backend/
+
+# Local sandboxes and scratch files
+/kmmApp/
+/tmp/
+/gradle-user-home/
+/profile-out/
+/remote-downloads/
+remote-downloads/
+hetzner-*.tar.gz
+*-hetzner/
+*-hawkhost/
+
+# Android outputs
+*.apk
+*.ap_
+*.aab
+*.aar
+androidApp/release/
+androidApp/.cxx/
+.externalNativeBuild/
+.cxx/
+captures/
+.navigation/
+*.hprof
+
+# Kotlin/Native and iOS generated files
+*.kotlin_module
+*.kotlin_builtins
+*.framework
+*.xcframework/
+*.dSYM/
+*.xcworkspace
+xcuserdata/
+DerivedData/
+.derivedData/
+iosApp/build/
+iosApp/Pods/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+
+# Node
+node_modules/
+
+# Python backend
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# OS and logs
+.DS_Store
+*.log
+*.log.*
+*.tmp
+*.bak
+*.orig
+hs_err_pid*
+replay_pid*
+
+# Generated/cache archives
+*.cache
+*.zip.part
+*.zip.lck
+*.tar.gz
+*.rar
+moduleguard-report.json
+
+# Sentry wizard binary
+sentry-wizard
+
+# Local automation
+/scripts/push_single_init_commit.py

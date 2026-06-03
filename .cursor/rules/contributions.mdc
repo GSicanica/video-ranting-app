@@ -1,0 +1,19 @@
+---
+description: Contribution workflow
+globs:
+  - "**/*"
+alwaysApply: false
+---
+
+# Contributions
+
+- Keep behavior changes, architecture moves, and formatting-only edits separate where practical.
+- Before editing, check for existing local changes and do not revert unrelated work.
+- Use clear commit messages that describe behavior or architecture impact.
+- PR/change notes should include:
+  - What changed
+  - Why the structure changed
+  - Validation commands run
+  - Known migration debt left in place
+- Do not commit generated build outputs, IDE caches, `.gradle`, `.derivedData`, or secret files.
+

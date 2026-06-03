@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- Globe outline -->
+    <path
+        android:pathData="M14,5C8,5 4,10 4,14s4,9 10,9 10,-5 10,-9S20,5 14,5z"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"/>
+    <!-- Left meridian -->
+    <path
+        android:pathData="M14,5c-2,3 -3,6 -3,9s1,6 3,9"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"/>
+    <!-- Right meridian -->
+    <path
+        android:pathData="M14,5c2,3 3,6 3,9s-1,6 -3,9"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"/>
+    <!-- Equator -->
+    <path
+        android:pathData="M5,14L23,14"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"/>
+</vector>

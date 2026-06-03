@@ -1,0 +1,24 @@
+---
+description: Testing rules
+globs:
+  - "**/*Test.kt"
+  - "**/*androidTest*/**/*.kt"
+  - "**/*.kt"
+alwaysApply: false
+---
+
+# Testing
+
+- Prefer focused unit tests for domain/use-case/repository changes.
+- Prefer fakes over broad mocks when testing ViewModels and repositories.
+- For ViewModels, test state transitions and one-time events.
+- For Compose screens, cover high-value interactions and empty/loading/error states when feasible.
+- For migration-only moves, run compile/smoke tasks and avoid changing logic in the same patch.
+- Use the narrowest relevant command while iterating:
+
+```bash
+./gradlew :composeApp:testDebugUnitTest
+./gradlew :composeApp:compileDebugKotlinAndroid
+./gradlew :androidApp:assembleDebug
+```
+

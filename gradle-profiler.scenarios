@@ -1,0 +1,17 @@
+compose_app_compile_debug {
+    tasks = [":composeApp:compileDebugKotlinAndroid"]
+    warm-ups = 1
+    iterations = 3
+}
+
+compose_app_unit_tests {
+    tasks = [":composeApp:testDebugUnitTest"]
+    warm-ups = 1
+    iterations = 3
+}
+
+architecture_check {
+    tasks = ["productionArchitectureCheck"]
+    warm-ups = 1
+    iterations = 3
+}

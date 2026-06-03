@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- Outer circle: cx=14 cy=14 r=9 -->
+    <path
+        android:pathData="M5,14A9,9 0,1 1,23 14A9,9 0,1 1,5 14Z"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"/>
+    <!-- Inner circle: cx=14 cy=14 r=3 (filled) -->
+    <path
+        android:pathData="M11,14A3,3 0,1 1,17 14A3,3 0,1 1,11 14Z"
+        android:fillColor="#000000"/>
+</vector>

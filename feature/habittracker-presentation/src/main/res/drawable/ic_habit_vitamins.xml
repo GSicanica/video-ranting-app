@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- Sun/pill circle: cx=14 cy=12 r=4 -->
+    <path
+        android:pathData="M10,12A4,4 0,1 1,18 12A4,4 0,1 1,10 12Z"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"/>
+    <!-- Stem down -->
+    <path
+        android:pathData="M14,16L14,22"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+    <!-- Base -->
+    <path
+        android:pathData="M10,24L18,24"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+    <!-- Ray left -->
+    <path
+        android:pathData="M7,8L9,10"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+    <!-- Ray right -->
+    <path
+        android:pathData="M21,8L19,10"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+    <!-- Ray top -->
+    <path
+        android:pathData="M14,4L14,6"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+</vector>

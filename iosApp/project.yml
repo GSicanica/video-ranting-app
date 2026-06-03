@@ -1,0 +1,104 @@
+name: iosApp
+options:
+  bundleIdPrefix: com.youtuberatings
+  deploymentTarget:
+    iOS: "15.0"
+  developmentLanguage: en
+
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - iosApp
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: YouTube Ratings
+        CFBundleShortVersionString: "5.0"
+        CFBundleVersion: "67"
+        UILaunchScreen: {}
+        # API Configuration
+        YT_BASE_URL: https://api.youtuberating.app
+        YT_DATA_BASE_URL: https://data.youtuberating.app
+        # Permissions
+        NSLocalNetworkUsageDescription: "This app needs access to your local network for better connectivity."
+        NSBonjourServiceTypes: 
+          - _http._tcp
+          - _https._tcp
+        NSCameraUsageDescription: "Camera access may be required for video features."
+        NSMicrophoneUsageDescription: "Microphone access is needed for calls and voice features."
+        NSUserTrackingUsageDescription: "App tracking helps personalize your experience."
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.youtuberatings.ios
+        DEVELOPMENT_TEAM: "75TF5GWJ8U"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+        SWIFT_VERSION: "5.0"
+        ENABLE_BITCODE: NO
+        ENABLE_TESTING_SEARCH_PATHS: YES
+        
+        # Framework Search Paths
+        FRAMEWORK_SEARCH_PATHS: "$(inherited) $(PROJECT_DIR)"
+        OTHER_LDFLAGS: "$(inherited) -framework shared -framework composeApp"
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+        
+        # Swift Settings
+        SWIFT_COMPILATION_MODE: singlefile
+        SWIFT_OPTIMIZATION_LEVEL: "-Osize"
+        
+      debug:
+        SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+        OTHER_SWIFT_FLAGS: "-Xfrontend -disable-function-cmo"
+        
+      release:
+        SWIFT_OPTIMIZATION_LEVEL: "-O"
+        SWIFT_COMPILATION_MODE: wholemodule
+
+    preBuildScripts:
+      - name: Build KMP Frameworks
+        script: |
+          set -euo pipefail
+          echo "📦 Building Kotlin Multiplatform Frameworks..."
+          cd "$SRCROOT/.."
+          ./gradlew iosAppAssembleXCFrameworks \
+            --no-daemon \
+            --console=plain \
+            -x test
+        runOnlyWhenInstalling: false
+
+    postBuildScripts:
+      - name: Sync XCFrameworks to Project
+        script: |
+          set -euo pipefail
+          cd "$SRCROOT/.."
+          ./gradlew iosAppSyncXCFrameworks \
+            --no-daemon \
+            --console=plain
+        runOnlyWhenInstalling: false
+
+    dependencies:
+      - framework: shared.xcframework
+        embed: true
+      - framework: composeApp.xcframework
+        embed: true
+
+    schemes:
+      iosApp:
+        build:
+          targets:
+            iosApp: all
+        run:
+          config: Debug
+        test:
+          config: Debug
+        profile:
+          config: Release
+        analyze:
+          config: Debug
+        archive:
+          config: Release

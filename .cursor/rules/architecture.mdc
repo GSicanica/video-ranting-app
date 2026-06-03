@@ -1,0 +1,73 @@
+---
+description: Architecture rules for YouTube Rating App
+globs:
+  - "**/*.kt"
+  - "**/*.kts"
+alwaysApply: true
+---
+
+# Architecture
+
+## Non-negotiables
+
+- Preserve behavior while migrating. Do not combine large moves with behavior changes.
+- `:androidApp` is a thin launcher/application module. Keep app logic in `:composeApp` or future feature/core modules.
+- `:composeApp` is currently the migration host. New code should still follow package-level layer boundaries.
+- `:shared` contains KMP-safe code. Do not add Android-only APIs to `commonMain`.
+- Use `:build-logic` convention plugins for module defaults instead of repeating Gradle boilerplate.
+
+## Target Module Shape
+
+Use this target shape for new feature extraction:
+
+```text
+:core:domain
+:core:data
+:core:presentation
+:core:design-system
+:feature:<name>:domain
+:feature:<name>:data
+:feature:<name>:presentation
+```
+
+Dependency direction:
+
+```text
+presentation -> domain <- data
+presentation -> core-presentation/core-design-system/core-domain
+data -> core-data/core-domain
+domain -> core-domain only
+```
+
+Features do not depend directly on other feature implementations. Cross-feature behavior goes through domain contracts, shared core APIs, or callbacks owned by the app navigation layer.
+
+## Current Migration Rules
+
+Because most functionality still lives in `composeApp/src/androidMain`, enforce the target layers by package:
+
+- `domain/**`: pure contracts, models, use cases. No Compose, Android UI, Koin, Room, OkHttp, DataStore.
+- `data/**`: repositories, prefs, API/local coordination. May implement domain contracts.
+- `network/**`: network clients, DTO/network result handling.
+- `ui/**` and `viewmodel/**`: presentation state, Compose screens, user actions.
+- `navigation/**`: app graph assembly and cross-screen routing.
+- `di/**`: Koin module assembly only.
+
+When extracting a feature, first create the public domain contract, then move data and presentation in separate commits.
+
+## DI
+
+- Koin modules are composition roots. Prefer interface-to-implementation bindings.
+- ViewModels are injected at screen/root boundaries.
+- New feature DI belongs near the feature package/module and is included from app-level module assembly.
+- Avoid service locator calls from UI and domain code.
+
+## Verification
+
+Run:
+
+```bash
+./gradlew productionArchitectureCheck
+```
+
+This enforces the thin launcher rule and prints current migration debt so future work can reduce it without breaking existing behavior.
+

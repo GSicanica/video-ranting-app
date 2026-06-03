@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- House outline -->
+    <path
+        android:pathData="M8,22L8,12L14,6L20,12L20,22"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+    <!-- Door: rect x=11 y=16 w=6 h=6 rx=1 -->
+    <path
+        android:pathData="M12,16L16,16A1,1 0,0 1,17 17L17,21A1,1 0,0 1,16 22L12,22A1,1 0,0 1,11 21L11,17A1,1 0,0 1,12 16Z"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.5"/>
+</vector>

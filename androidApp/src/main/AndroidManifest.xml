@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:installLocation="auto">
+
+    <!-- Network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Android 13+ notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Calls (LiveKit) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <!-- Boot receiver -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Foreground services -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!-- LiveKit SDK adds this via its manifest; remove since we don't use screen sharing/media projection. -->
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"
+        tools:node="remove" />
+
+    <application
+        android:name="com.youtube.rating.android.YouTubeRatingApplication"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="${appLabel}"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="${usesCleartextTraffic}"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        tools:targetApi="33"
+        >
+
+        <!-- ===================== -->
+        <!-- Sentry configuration  -->
+        <!-- ===================== -->
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="${sentryDsn}" />
+
+        <meta-data
+            android:name="io.sentry.environment"
+            android:value="${sentryEnvironment}" />
+
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="${sentryTracesSampleRate}" />
+
+        <meta-data
+            android:name="io.sentry.traces.profiling.session-sample-rate"
+            android:value="${sentryProfilingSessionSampleRate}" />
+
+        <meta-data
+            android:name="io.sentry.traces.profiling.lifecycle"
+            android:value="${sentryProfilingLifecycle}" />
+
+        <meta-data
+            android:name="io.sentry.traces.profiling.start-on-app-start"
+            android:value="${sentryProfilingStartOnAppStart}" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${googleMapsApiKey}" />
+
+        <!-- ===================== -->
+        <!-- Main Activity         -->
+        <!-- ===================== -->
+        <activity
+            android:name="com.youtube.rating.android.MainActivity"
+            android:exported="true"
+            android:supportsPictureInPicture="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar"
+            tools:ignore="Instantiatable">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="youtuberating" />
+                <data android:host="rate" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="youtuberating.app" />
+                <data android:pathPrefix="/rate" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+        </activity>
+
+        <!-- ===================== -->
+        <!-- FileProvider          -->
+        <!-- ===================== -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <service
+            android:name="com.youtube.rating.android.feature.running.service.RunningTrackingService"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            tools:ignore="MissingClass" />
+
+        <!-- ===================== -->
+        <!-- App Widget            -->
+        <!-- ===================== -->
+        <receiver
+            android:name="com.youtube.rating.android.widget.FavoriteVideoWidgetProvider"
+            android:exported="true"
+            android:permission="android.permission.BIND_APPWIDGET"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/favorite_video_widget_info" />
+        </receiver>
+
+        <!-- ===================== -->
+        <!-- Reminders             -->
+        <!-- ===================== -->
+        <receiver
+            android:name="com.youtube.rating.android.notifications.FastingReminderReceiver"
+            android:exported="false"
+            tools:ignore="MissingClass" />
+
+        <receiver
+            android:name="com.youtube.rating.android.notifications.BibleReminderReceiver"
+            android:exported="false"
+            tools:ignore="MissingClass" />
+
+        <!-- Boot receivers -->
+        <receiver
+            android:name="com.youtube.rating.android.notifications.FastingReminderBootReceiver"
+            android:exported="false"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.youtube.rating.android.notifications.BibleReminderBootReceiver"
+            android:exported="false"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

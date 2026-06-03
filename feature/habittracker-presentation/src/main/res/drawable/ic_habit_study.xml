@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- Calendar header (filled) -->
+    <path
+        android:pathData="M5,7L23,7L23,9L5,9Z"
+        android:fillColor="#000000"/>
+    <!-- Calendar body: rect x=5 y=9 w=18 h=14 rx=1.5 -->
+    <path
+        android:pathData="M6.5,9L21.5,9A1.5,1.5 0,0 1,23 10.5L23,21.5A1.5,1.5 0,0 1,21.5 23L6.5,23A1.5,1.5 0,0 1,5 21.5L5,10.5A1.5,1.5 0,0 1,6.5 9Z"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"/>
+    <!-- Dot row 1 -->
+    <path
+        android:pathData="M10,14L10,14.01"
+        android:strokeColor="#000000"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M14,14L14,14.01"
+        android:strokeColor="#000000"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M18,14L18,14.01"
+        android:strokeColor="#000000"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <!-- Dot row 2 -->
+    <path
+        android:pathData="M10,19L10,19.01"
+        android:strokeColor="#000000"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M14,19L14,19.01"
+        android:strokeColor="#000000"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+</vector>

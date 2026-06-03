@@ -1,0 +1,25 @@
+style:
+  active: true
+  UnusedImports:
+    active: true
+  UnusedPrivateMember:
+    active: true
+  UnusedParameter:
+    active: true
+  MagicNumber:
+    active: false
+
+complexity:
+  active: false
+
+comments:
+  active: false
+
+performance:
+  active: false
+
+potential-bugs:
+  active: false
+
+naming:
+  active: false

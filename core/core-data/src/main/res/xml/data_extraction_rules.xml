@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android Auto Backup rules for API 31+ (Android 12+).
+    Defines what gets included in Google's automatic cloud backup
+    and device-to-device transfer.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Include DataStore preferences -->
+        <include domain="file" path="datastore/" />
+
+        <!-- Include internal JSON files (rosary, etc.) -->
+        <include domain="file" path="rosary_sessions.json" />
+        <include domain="file" path="rosary_settings.json" />
+        <include domain="file" path="rosary_stats.json" />
+
+        <!-- Include manual backup files -->
+        <include domain="file" path="backups/" />
+    </cloud-backup>
+
+    <device-transfer>
+        <!-- Include DataStore preferences -->
+        <include domain="file" path="datastore/" />
+
+        <!-- Include internal JSON files -->
+        <include domain="file" path="rosary_sessions.json" />
+        <include domain="file" path="rosary_settings.json" />
+        <include domain="file" path="rosary_stats.json" />
+
+        <!-- Include backup files -->
+        <include domain="file" path="backups/" />
+    </device-transfer>
+</data-extraction-rules>

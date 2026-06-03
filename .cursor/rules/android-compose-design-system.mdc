@@ -1,0 +1,19 @@
+---
+description: Compose UI and design-system rules
+globs:
+  - "composeApp/src/**/*.kt"
+alwaysApply: false
+---
+
+# Android Compose Design System
+
+- Prefer existing components in `com.youtube.rating.android.ui.components`.
+- Do not duplicate top bars, loading states, empty states, rating selectors, media thumbnails, or scaffold behavior without checking existing components first.
+- Screen composables render immutable state and forward actions. Business decisions belong in ViewModels/use cases.
+- Keep feature UI package-local unless another feature needs a stable public component.
+- Use theme tokens from the app theme instead of hardcoded colors for reusable UI.
+- Interactive icons and media controls need content descriptions unless they are explicitly decorative.
+- Lazy lists should use stable keys when item IDs exist.
+- Avoid nested card-heavy layouts for dense app screens; prefer clear sections and reusable rows/cards only for repeated items.
+- Text must fit on small screens. Prefer responsive layout constraints over viewport-scaled font sizes.
+

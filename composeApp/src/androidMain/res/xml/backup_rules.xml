@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android Auto Backup rules (API 23-30).
+    Defines what gets included in Google's automatic cloud backup.
+    DataStore preferences and internal JSON files are included.
+    Realm database is excluded (encrypted, key is device-specific).
+-->
+<full-backup-content>
+    <!-- Exclude EncryptedSharedPreferences (Android Keystore keys are not reliably transferable across devices). -->
+    <exclude domain="sharedpref" path="user_token_prefs.xml" />
+    <exclude domain="sharedpref" path="admin_secure_prefs.xml" />
+
+    <!-- Include DataStore preferences -->
+    <include domain="file" path="datastore/" />
+
+    <!-- Include internal JSON files (rosary, etc.) -->
+    <include domain="file" path="rosary_sessions.json" />
+    <include domain="file" path="rosary_settings.json" />
+    <include domain="file" path="rosary_stats.json" />
+
+    <!-- Include manual backup files -->
+    <include domain="file" path="backups/" />
+</full-backup-content>

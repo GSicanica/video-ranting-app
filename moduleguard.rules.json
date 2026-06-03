@@ -1,0 +1,15 @@
+{
+  "rules": [
+    {
+      "name": "Android launcher dependencies",
+      "from": "androidApp",
+      "allow": ["composeApp", "shared"]
+    },
+    {
+      "name": "Compose app dependencies",
+      "from": "composeApp",
+      "allow": ["shared"]
+    }
+  ],
+  "disallowCycles": true
+}

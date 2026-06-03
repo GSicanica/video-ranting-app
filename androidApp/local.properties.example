@@ -1,0 +1,27 @@
+## This file is an example of local.properties configuration
+# Copy this file to "local.properties" and customize it for your local setup.
+# NOTE: local.properties is NOT committed to Git - it's your personal configuration!
+
+# Android SDK location (required)
+# This will be automatically set by Android Studio
+sdk.dir=/path/to/your/Android/sdk
+
+# Logging Configuration (optional)
+# Set to true to enable all app logs (for debugging)
+# Set to false to disable all app logs (for production)
+# Default: true
+enable.logging=true
+
+# Examples:
+# enable.logging=true   # Enable all logs (debugging)
+# enable.logging=false  # Disable all logs (production)
+
+# Sentry (optional)
+# SENTRY_DSN=https://<public_key>@o0.ingest.sentry.io/0
+
+# Google Maps (required for map features)
+# GOOGLE_MAPS_API_KEY=AIza...
+
+# Kotzilla (optional)
+# Used for analytics SDK. Keep out of git; set in androidApp/local.properties or CI secrets.
+# KOTZILLA_API_KEY=ktz-sdk-...
