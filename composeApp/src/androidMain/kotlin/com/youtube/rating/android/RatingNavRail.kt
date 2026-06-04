@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
@@ -32,7 +31,6 @@ internal fun RatingNavigationRail(
     isInPipMode: Boolean,
     currentRoute: String?,
     navController: NavHostController,
-    callsTabEnabled: Boolean,
     onHomeReClick: () -> Unit,
 ) {
     if (isInPipMode) return
@@ -43,7 +41,6 @@ internal fun RatingNavigationRail(
         currentRoute == Screen.Bible.route ||
         (currentRoute?.startsWith("bible/") == true) ||
         (currentRoute?.startsWith("reader/") == true)
-    val selectedCalls = callsTabEnabled && currentRoute == Screen.Calls.route
     val selectedFavorites = currentRoute == Screen.Favorites.route
 
     val itemColors = NavigationRailItemDefaults.colors(
@@ -90,16 +87,6 @@ internal fun RatingNavigationRail(
             selected = selectedTraining,
             onClick = { navController.navigate(Screen.Bible.route) { launchSingleTop = true } }
         )
-
-        if (callsTabEnabled) {
-            NavigationRailItem(
-                colors = itemColors,
-                icon = { Icon(Icons.Default.VideoCall, modifier = Modifier.size(20.dp), contentDescription = "Pozivi") },
-                label = { RailLabel(text = "Pozivi", selected = selectedCalls) },
-                selected = selectedCalls,
-                onClick = { navController.navigate(Screen.Calls.route) { launchSingleTop = true } }
-            )
-        }
 
         NavigationRailItem(
             colors = itemColors,

@@ -196,11 +196,7 @@ class HomeViewModel(
             )
             HomeContract.Intent.LoadMore -> loadMoreVideos(languageCodes = _state.value.languageCodes)
             is HomeContract.Intent.SetBrowseRatingFilters -> Unit // observers react to filters changes
-            is HomeContract.Intent.SelectTab -> {
-                if (intent.tab == HomeTab.ForYou) {
-                    loadForYouVideos(forceRefresh = false)
-                }
-            }
+            is HomeContract.Intent.SelectTab -> Unit
         }
     }
 
@@ -600,9 +596,6 @@ private fun setSelectedContentLanguages(languages: Set<Strings.Language>) {
             val token = runCatching { userTokenManager.getUserTokenAsync() }.getOrNull()
             onMain {
                 _userToken.value = token
-                if (_state.value.uiState.selectedTab == HomeTab.ForYou) {
-                    loadForYouVideos(forceRefresh = false)
-                }
             }
         }
 
@@ -702,12 +695,8 @@ private fun setSelectedContentLanguages(languages: Set<Strings.Language>) {
                 .debounce(APPLY_RATING_FILTERS_DEBOUNCE_MS)
                 .collectLatest { filters ->
                     if (!_state.value.uiState.showBrowse) return@collectLatest
-                    if (_state.value.uiState.selectedTab == HomeTab.ForYou) {
-                        loadForYouVideos(forceRefresh = true)
-                    } else {
-                        applyRatingFilterRanges(filters = filters)
-                        loadBrowseVideos(_state.value.languageCodes, resetPage = true)
-                    }
+                    applyRatingFilterRanges(filters = filters)
+                    loadBrowseVideos(_state.value.languageCodes, resetPage = true)
                 }
         }
 
@@ -717,11 +706,7 @@ private fun setSelectedContentLanguages(languages: Set<Strings.Language>) {
                 .debounce(FILTER_DELAY_MS)
                 .collectLatest {
                     if (!_state.value.uiState.showBrowse) return@collectLatest
-                    if (_state.value.uiState.selectedTab == HomeTab.ForYou) {
-                        loadForYouVideos(forceRefresh = true)
-                    } else {
-                        loadBrowseVideos(_state.value.languageCodes, resetPage = true)
-                    }
+                    loadBrowseVideos(_state.value.languageCodes, resetPage = true)
                 }
         }
 
@@ -732,76 +717,9 @@ private fun setSelectedContentLanguages(languages: Set<Strings.Language>) {
                 .collectLatest { codes ->
                     loadSearchSuggestions()
                     if (!_state.value.uiState.showBrowse) return@collectLatest
-                    if (_state.value.uiState.selectedTab == HomeTab.ForYou) {
-                        loadForYouVideos(forceRefresh = true)
-                    } else {
-                        loadBrowseVideos(codes, resetPage = true)
-                        loadFeaturedVideos(languageCodes = codes)
-                    }
+                    loadBrowseVideos(codes, resetPage = true)
+                    loadFeaturedVideos(languageCodes = codes)
                 }
-        }
-    }
-
-    fun loadForYouVideos(forceRefresh: Boolean = false) {
-        val token = _userToken.value?.trim().orEmpty()
-        if (token.isBlank()) {
-            updateState {
-                it.copy(
-                    isForYouLoading = false,
-                    forYouError = Strings.tokenLoading,
-                    forYouVideos = emptyList(),
-                    forYouColdStart = false
-                )
-            }
-            return
-        }
-
-        updateState { it.copy(isForYouLoading = true, forYouError = null) }
-
-        makeIOCall {
-            runCatching {
-                ratingApiClient.getPersonalizedFeed(
-                    userToken = token,
-                    limit = 50,
-                    category = _state.value.selectedCategory,
-                    languages = _state.value.languageCodes,
-                    forceRefresh = forceRefresh
-                )
-            }.onSuccess { response ->
-                onMain {
-                    if (response.success) {
-                        updateState {
-                            it.copy(
-                                isForYouLoading = false,
-                                forYouError = null,
-                                forYouColdStart = response.coldStart,
-                                forYouVideos = tasteGraphRanker(response.videos, limit = 50)
-                            )
-                        }
-                    } else {
-                        updateState {
-                            it.copy(
-                                isForYouLoading = false,
-                                forYouError = response.message ?: Strings.loadError,
-                                forYouVideos = emptyList(),
-                                forYouColdStart = false
-                            )
-                        }
-                    }
-                }
-            }.onFailure { error ->
-                com.youtube.rating.android.sentry.SentryLogger.captureException(error)
-                onMain {
-                    updateState {
-                        it.copy(
-                            isForYouLoading = false,
-                            forYouError = error.message ?: Strings.loadError,
-                            forYouVideos = emptyList(),
-                            forYouColdStart = false
-                        )
-                    }
-                }
-            }
         }
     }
 
@@ -1037,9 +955,6 @@ private fun setSelectedContentLanguages(languages: Set<Strings.Language>) {
         disableAutoShuffle()
         updateState { it.copy(selectedCategory = normalized) }
         persistSelectedCategory(category = normalized)
-        if (_state.value.uiState.selectedTab == HomeTab.ForYou) {
-            loadForYouVideos(forceRefresh = true)
-        }
     }
 
     fun updateLoveRange(range: ClosedFloatingPointRange<Float>) {

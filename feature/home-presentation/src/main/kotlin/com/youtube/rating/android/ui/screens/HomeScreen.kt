@@ -301,11 +301,6 @@ fun HomeScreen(
     }
 
     val popularVideos = homeState.popularVideos
-    val forYouVideos = homeState.forYouVideos
-    val isForYouLoading = homeState.isForYouLoading
-    val forYouError = homeState.forYouError
-    val forYouColdStart = homeState.forYouColdStart
-
     var lastHandledHomeTabClickTick by rememberSaveable {
         mutableLongStateOf(homeTabClickTick)
     }
@@ -944,7 +939,6 @@ fun HomeScreen(
             if (uiState.showBrowse) {
                 val homeTabs = listOf(
                     HomeTab.Browse to Strings.browse,
-                    HomeTab.ForYou to "For You",
                     HomeTab.Clips to Strings.clips,
                 )
                 SecondaryTabRow(
@@ -957,14 +951,6 @@ fun HomeScreen(
                         selected = selectedTab == HomeTab.Browse,
                         onClick = { selectTab(HomeTab.Browse) },
                         text = { Text(Strings.browse) },
-                    )
-                    Tab(
-                        selected = selectedTab == HomeTab.ForYou,
-                        onClick = {
-                            selectTab(HomeTab.ForYou)
-                            homeViewModel.loadForYouVideos(forceRefresh = false)
-                        },
-                        text = { Text("For You") },
                     )
                     Tab(
                         selected = selectedTab == HomeTab.Clips,
@@ -1003,86 +989,57 @@ fun HomeScreen(
 
                     else -> {
                         PullToRefreshBox(
-                            isRefreshing = if (selectedTab == HomeTab.ForYou) {
-                                isForYouLoading && forYouVideos.isEmpty()
-                            } else {
-                                isBrowsing && displayedBrowseVideos.isEmpty()
-                            },
+                            isRefreshing = isBrowsing && displayedBrowseVideos.isEmpty(),
                             onRefresh = {
                                 com.youtube.rating.android.sentry.SentryLogger.metricCount("home_refresh", 1.0)
-                                if (selectedTab == HomeTab.ForYou) {
-                                    homeViewModel.loadForYouVideos(forceRefresh = true)
-                                } else {
-                                    refreshBrowse(resetPage = true, forceRefresh = true, preserveOrder = true)
-                                    homeViewModel.loadFeaturedVideos(languageCodes)
-                                }
+                                refreshBrowse(resetPage = true, forceRefresh = true, preserveOrder = true)
+                                homeViewModel.loadFeaturedVideos(languageCodes)
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            if (selectedTab == HomeTab.ForYou) {
-                                HomeForYouSection(
-                                    videos = forYouVideos,
-                                    isLoading = isForYouLoading,
-                                    error = forYouError,
-                                    isColdStart = forYouColdStart,
-                                    isGridView = uiState.isGridView,
-                                    isAdminMode = isAdminMode,
-                                    disableScrollEffects = disableScrollEffects,
-                                    gridState = gridScrollState,
-                                    listState = listScrollState,
-                                    onRetry = { homeViewModel.loadForYouVideos(forceRefresh = true) },
-                                    onVideoClick = onVideoClick,
-                                    onFavoriteClick = toggleFavorite,
-                                    onQuickRateClick = onQuickRateClick,
-                                    onLongPress = onLongPressVideo,
-                                    onReportClick = onReportClick,
-                                    isFavorite = isFavorite
-                                )
-                            } else {
-                                BrowseSection(
-                                    headerContent = if (!lockFeaturedHome) {
-                                        {
-                                            if (popularVideos.isNotEmpty()) {
-                                                HomeBrowseHeaderCard(
-                                                    featured = popularVideos,
-                                                    popularRange = popularRange,
-                                                    onPopularRangeChange = { dispatchHomeIntent(HomeContract.Intent.SelectPopularRange(it)) },
-                                                    showPopularTimeDropdown = popularTimeVideosEnabled,
-                                                    onVideoClick = onVideoClick
-                                                )
-                                            }
+                            BrowseSection(
+                                headerContent = if (!lockFeaturedHome) {
+                                    {
+                                        if (popularVideos.isNotEmpty()) {
+                                            HomeBrowseHeaderCard(
+                                                featured = popularVideos,
+                                                popularRange = popularRange,
+                                                onPopularRangeChange = { dispatchHomeIntent(HomeContract.Intent.SelectPopularRange(it)) },
+                                                showPopularTimeDropdown = popularTimeVideosEnabled,
+                                                onVideoClick = onVideoClick
+                                            )
                                         }
-                                    } else null,
-                                    isOnline = isOnline,
-                                    searchQuery = searchQuery,
-                                    browseItems = browsePagingItems,
-                                    orderedBrowseVideos = if (homeState.isBrowseOrderManual) homeState.browseVideos else emptyList(),
-                                    isBrowsing = isBrowsing,
-                                    browseError = browseError,
-                                    randomLoading = randomLoading.value,
-                                    randomProgress = randomProgress.value,
-                                    isGridView = uiState.isGridView,
-                                    isAdminMode = isAdminMode,
-                                    onResetFilters = onResetFiltersCallback,
-                                    onClearSearch = {
-                                        dispatchHomeIntent(HomeContract.Intent.ClearSearch)
-                                        refreshBrowse(resetPage = true)
-                                    },
-                                    onRetry = onRetryCallback,
-                                    onVideoClick = onVideoClick,
-                                    onFavoriteClick = toggleFavorite,
-                                    onQuickRateClick = onQuickRateClick,
-                                    onLongPress = onLongPressVideo,
-                                    onReportClick = onReportClick,
-                                    isFavorite = isFavorite,
-                                    isLoadingMore = isLoadingMore,
-                                    hasMore = hasMore,
-                                    onAddVideo = { openUrlDialog("") },
-                                    gridState = gridScrollState,
-                                    listState = listScrollState,
-                                    disableScrollEffects = disableScrollEffects
-                                )
-                            }
+                                    }
+                                } else null,
+                                isOnline = isOnline,
+                                searchQuery = searchQuery,
+                                browseItems = browsePagingItems,
+                                orderedBrowseVideos = if (homeState.isBrowseOrderManual) homeState.browseVideos else emptyList(),
+                                isBrowsing = isBrowsing,
+                                browseError = browseError,
+                                randomLoading = randomLoading.value,
+                                randomProgress = randomProgress.value,
+                                isGridView = uiState.isGridView,
+                                isAdminMode = isAdminMode,
+                                onResetFilters = onResetFiltersCallback,
+                                onClearSearch = {
+                                    dispatchHomeIntent(HomeContract.Intent.ClearSearch)
+                                    refreshBrowse(resetPage = true)
+                                },
+                                onRetry = onRetryCallback,
+                                onVideoClick = onVideoClick,
+                                onFavoriteClick = toggleFavorite,
+                                onQuickRateClick = onQuickRateClick,
+                                onLongPress = onLongPressVideo,
+                                onReportClick = onReportClick,
+                                isFavorite = isFavorite,
+                                isLoadingMore = isLoadingMore,
+                                hasMore = hasMore,
+                                onAddVideo = { openUrlDialog("") },
+                                gridState = gridScrollState,
+                                listState = listScrollState,
+                                disableScrollEffects = disableScrollEffects
+                            )
                         }
                     }
                 }

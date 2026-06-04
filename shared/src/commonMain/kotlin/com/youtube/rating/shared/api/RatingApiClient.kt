@@ -24,7 +24,6 @@ import com.youtube.rating.shared.models.HealthCheckResponse
 import com.youtube.rating.shared.models.HomeCategoriesResponse
 import com.youtube.rating.shared.models.NovenaTodayResponse
 import com.youtube.rating.shared.models.PaginatedSearchResponse
-import com.youtube.rating.shared.models.PersonalizedFeedResponse
 import com.youtube.rating.shared.models.TopVideosResponse
 import com.youtube.rating.shared.models.PaginationData
 import com.youtube.rating.shared.models.PopularTermsResponse
@@ -40,12 +39,6 @@ import com.youtube.rating.shared.models.SyncFavoritesRequest
 import com.youtube.rating.shared.models.SyncFavoritesResponse
 import com.youtube.rating.shared.models.PsalmHighlightsSyncRequest
 import com.youtube.rating.shared.models.PsalmHighlightsSyncResponse
-import com.youtube.rating.shared.models.PsalmRoomRequest
-import com.youtube.rating.shared.models.PsalmRoomResponse
-import com.youtube.rating.shared.models.PsalmAvailabilityListRequest
-import com.youtube.rating.shared.models.PsalmAvailabilityListResponse
-import com.youtube.rating.shared.models.PsalmAvailabilitySetRequest
-import com.youtube.rating.shared.models.PsalmAvailabilitySetResponse
 import com.youtube.rating.shared.models.TrackUsageRequest
 import com.youtube.rating.shared.models.WatchHistoryClearRequest
 import com.youtube.rating.shared.models.WatchHistoryRecordRequest
@@ -94,7 +87,6 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import kotlin.math.min
 
 /**
@@ -148,7 +140,6 @@ class RatingApiClient(
         private const val TTL_YOUTUBE_VIDEO_INFO_MS = 24 * 60 * 60 * 1000L // 24h
         private const val TTL_TOP_VIDEOS_MS = 5 * 60_000L         // 5m
         private const val TTL_HOME_CATEGORIES_MS = 10 * 60_000L   // 10m
-        private const val TTL_FOR_YOU_MS = 45_000L                // 45s
     }
 
     private fun log(message: String) = LogConfig.log(message)
@@ -1012,50 +1003,6 @@ class RatingApiClient(
         }
     }
 
-    suspend fun getPersonalizedFeed(
-        userToken: String,
-        limit: Int = 50,
-        category: String? = null,
-        languages: List<String> = emptyList(),
-        forceRefresh: Boolean = false
-    ): PersonalizedFeedResponse {
-        val safeToken = userToken.trim()
-        if (safeToken.isBlank()) {
-            return PersonalizedFeedResponse(success = false, message = "Missing user token")
-        }
-
-        val safeLimit = limit.coerceIn(1, 50)
-        val safeLanguages = languages
-            .map { it.trim().lowercase() }
-            .filter { it.isNotBlank() }
-            .distinct()
-
-        val params = mapOf(
-            "user_token" to safeToken,
-            "limit" to safeLimit,
-            "category" to category,
-            "languages" to if (safeLanguages.isNotEmpty()) safeLanguages.joinToString(",") else null
-        )
-
-        val path = "/api/v2/recommendations/for-you.php"
-        if (forceRefresh) {
-            cache.invalidate(cacheKey(path, params))
-        }
-
-        return cachedGet(path = path, ttlMs = TTL_FOR_YOU_MS, params = params) {
-            executeWithRetry {
-                client.get("$baseUrl$path") {
-                    parameter("user_token", safeToken)
-                    parameter("limit", safeLimit)
-                    category?.let { parameter("category", it) }
-                    if (safeLanguages.isNotEmpty()) {
-                        parameter("languages", safeLanguages.joinToString(","))
-                    }
-                }.body()
-            }
-        }
-    }
-
     suspend fun getRatedVideos(
         userToken: String,
         page: Int = 1,
@@ -1264,83 +1211,6 @@ class RatingApiClient(
             }.body()
         }
 
-    suspend fun getPsalmCallRoom(
-        userToken: String,
-        displayName: String,
-        gender: String,
-        notMarried: Boolean,
-        selectedTokens: List<String>,
-        favoritePsalm: String? = null
-    ): PsalmRoomResponse =
-        executeWithRetry(allowRetry = false) {
-            val token = getCsrfToken(forceRefresh = false)
-            client.post("$baseUrl/api/psalms/get-room.php") {
-                contentType(ContentType.Application.Json)
-                headers { append(CSRF_TOKEN_HEADER, token) }
-                addDevelopmentHeaders()
-                setBody(
-                    PsalmRoomRequest(
-                        userToken = userToken,
-                        displayName = displayName,
-                        gender = gender,
-                        notMarried = notMarried,
-                        selectedTokens = selectedTokens,
-                        favoritePsalm = favoritePsalm
-                    )
-                )
-            }.body()
-        }
-
-    suspend fun setPsalmCallAvailability(
-        userToken: String,
-        gender: String,
-        notMarried: Boolean,
-        favoritePsalm: String,
-        availableFrom: String,
-        displayName: String? = null,
-        ageYears: Int? = null
-    ): PsalmAvailabilitySetResponse =
-        executeWithRetry(allowRetry = false) {
-            val token = getCsrfToken(forceRefresh = false)
-            client.post("$baseUrl/api/psalms/set-availability.php") {
-                contentType(ContentType.Application.Json)
-                headers { append(CSRF_TOKEN_HEADER, token) }
-                addDevelopmentHeaders()
-                setBody(
-                    PsalmAvailabilitySetRequest(
-                        userToken = userToken,
-                        gender = gender,
-                        notMarried = notMarried,
-                        favoritePsalm = favoritePsalm,
-                        availableFrom = availableFrom,
-                        displayName = displayName,
-                        ageYears = ageYears
-                    )
-                )
-            }.body()
-        }
-
-    suspend fun listPsalmCallAvailability(
-        userToken: String,
-        gender: String,
-        favoritePsalm: String
-    ): PsalmAvailabilityListResponse =
-        executeWithRetry(allowRetry = false) {
-            val token = getCsrfToken(forceRefresh = false)
-            client.post("$baseUrl/api/psalms/list-availability.php") {
-                contentType(ContentType.Application.Json)
-                headers { append(CSRF_TOKEN_HEADER, token) }
-                addDevelopmentHeaders()
-                setBody(
-                    PsalmAvailabilityListRequest(
-                        userToken = userToken,
-                        gender = gender,
-                        favoritePsalm = favoritePsalm
-                    )
-                )
-            }.body()
-        }
-
     suspend fun reportVideo(
         videoId: String,
         userToken: String,
@@ -1403,13 +1273,6 @@ class RatingApiClient(
             )
         }
     }
-
-    suspend fun getCallsTabEnabled(default: Boolean = true): Boolean = runCatching {
-        val json: JsonElement = client.get("$baseUrl/api/config/app-settings.php") {
-            headers.append(HttpHeaders.AcceptCharset, "utf-8")
-        }.body()
-        readCallsTabEnabledFromConfig(json = json, default = default)
-    }.getOrDefault(default)
 
     suspend fun getPrayerRequests(
         userToken: String,
@@ -1525,34 +1388,6 @@ class RatingApiClient(
             cache.invalidatePrefix("/api/prayer/encouragements.php")
             res
         }
-
-    private fun readCallsTabEnabledFromConfig(json: JsonElement, default: Boolean): Boolean {
-        val root = json.jsonObject
-        val direct = readBooleanFlexibleTree(obj = root, keys = listOf("callsTabEnabled", "calls_tab_enabled", "callsTab", "calls_tab"))
-        if (direct != null) return direct
-        return default
-    }
-
-    private fun readBooleanFlexibleTree(obj: JsonObject, keys: List<String>): Boolean? {
-        readBooleanFlexible(obj = obj, keys = keys)?.let { return it }
-        val containers = listOf("data", "config", "flags", "featureFlags", "features")
-        for (key in containers) {
-            val nested = obj[key]?.jsonObject ?: continue
-            readBooleanFlexible(obj = nested, keys = keys)?.let { return it }
-        }
-        return null
-    }
-
-    private fun readBooleanFlexible(obj: JsonObject, keys: List<String>): Boolean? {
-        for (key in keys) {
-            val value = obj[key] ?: continue
-            value.jsonPrimitive.booleanOrNull?.let { return it }
-            val content = runCatching { value.jsonPrimitive.content }.getOrNull()?.trim()?.lowercase() ?: continue
-            if (content == "true" || content == "1" || content == "yes") return true
-            if (content == "false" || content == "0" || content == "no") return false
-        }
-        return null
-    }
 
     suspend fun deletePrayerRequest(requestId: String, adminToken: String): ApiResponse =
         executeWithRetry(allowRetry = false) {

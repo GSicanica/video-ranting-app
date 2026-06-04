@@ -1095,7 +1095,7 @@ fun SettingsScreen(
                         )
 
                         // User token is the only "identity" the app has (no login).
-                        // To keep calls + matchmaking stable, do not allow changing it in release builds.
+                        // Keep it stable in release builds so ratings and personal data stay attached.
                         if (BuildConfig.DEBUG) {
                             SettingsItem(
                                 icon = Icons.Default.Person,

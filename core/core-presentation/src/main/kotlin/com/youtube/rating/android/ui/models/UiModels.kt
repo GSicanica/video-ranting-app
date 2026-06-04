@@ -11,7 +11,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class HomeTab {
     Browse,
-    ForYou,
     Clips
 }
 

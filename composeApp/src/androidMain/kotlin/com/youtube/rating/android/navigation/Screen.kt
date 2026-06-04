@@ -100,10 +100,6 @@ sealed class Screen(val route: String) {
         override val category = Category.MAIN
     }
 
-    object Calls : Screen(route = "calls") {
-        override val category = Category.MAIN
-    }
-
     object Analytics : Screen(route = "analytics") {
         override val category = Category.MAIN
     }

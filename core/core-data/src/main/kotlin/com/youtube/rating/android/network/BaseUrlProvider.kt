@@ -15,7 +15,6 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 import com.youtube.rating.android.data.prefs.FeatureFlagsPrefs
 import com.youtube.rating.android.data.prefs.GenericPrefs
-import kotlinx.coroutines.flow.first
 
 /**
  * Dynamic Base URL provider.
@@ -35,11 +34,6 @@ object BaseUrlProvider {
     private var baseUrl: String = normalize(url = BuildConfig.BASE_URL)
     @Volatile
     private var dataBaseUrl: String = normalize(url = BuildConfig.BASE_URL)
-    @Volatile
-    private var callsTabEnabled: Boolean = true
-
-    private val callsTabEnabledState = kotlinx.coroutines.flow.MutableStateFlow(callsTabEnabled)
-
     private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
     private val httpClient by lazy {
         OkHttpClient.Builder()
@@ -55,11 +49,6 @@ object BaseUrlProvider {
     @JvmStatic
     fun getDataBaseUrl(): String = dataBaseUrl
 
-    @JvmStatic
-    fun getCallsTabEnabled(): Boolean = callsTabEnabled
-
-    fun callsTabEnabledFlow(): kotlinx.coroutines.flow.StateFlow<Boolean> = callsTabEnabledState
-
     fun initialize(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val stored = prefs.getString(KEY_BASE_URL, null)
@@ -73,15 +62,6 @@ object BaseUrlProvider {
             dataBaseUrl = normalize(url = storedData)
         } else {
             dataBaseUrl = baseUrl
-        }
-        callsTabEnabled = true
-        callsTabEnabledState.value = true
-        scope.launch {
-            runCatching {
-                val enabled = FeatureFlagsPrefs.callsTabEnabledFlow(context).first()
-                this@BaseUrlProvider.callsTabEnabled = enabled
-                callsTabEnabledState.value = enabled
-            }
         }
     }
 
@@ -132,7 +112,6 @@ object BaseUrlProvider {
                 val newDataBase = json.optString("dataBaseUrl", "").trim()
                 val featureFlagsObj = json.optJSONObject("featureFlags")
                 val popularTimeVideosEnabled = readBooleanFlexibleTree(json = featureFlagsObj ?: json, keys = listOf("popularTimeVideosEnabled", "popular_time_videos_enabled"), default = true)
-                val callsTabEnabled = readBooleanFlexibleTree(json = featureFlagsObj ?: json, keys = listOf("callsTabEnabled", "calls_tab_enabled", "callsTab", "calls_tab"), default = true)
                 val webViewJsAutomationEnabled = readBooleanFlexibleTree(
                     json = featureFlagsObj ?: json,
                     keys = listOf("webViewJsAutomationEnabled", "webview_js_automation_enabled", "webviewJsAutomationEnabled"),
@@ -141,7 +120,6 @@ object BaseUrlProvider {
                 persistFeatureFlags(
                     context = context,
                     popularTimeVideosEnabled = popularTimeVideosEnabled,
-                    callsTabEnabled = callsTabEnabled,
                     webViewJsAutomationEnabled = webViewJsAutomationEnabled
                 )
                 if (!success || newBase.isBlank()) {
@@ -165,14 +143,10 @@ object BaseUrlProvider {
     private fun persistFeatureFlags(
         context: Context,
         popularTimeVideosEnabled: Boolean,
-        callsTabEnabled: Boolean,
         webViewJsAutomationEnabled: Boolean
     ) {
-        this@BaseUrlProvider.callsTabEnabled = callsTabEnabled
-        callsTabEnabledState.value = callsTabEnabled
         scope.launch {
             runCatching { FeatureFlagsPrefs.setPopularTimeVideosEnabled(context, popularTimeVideosEnabled) }
-            runCatching { FeatureFlagsPrefs.setCallsTabEnabled(context, callsTabEnabled) }
             runCatching { FeatureFlagsPrefs.setWebViewJsAutomationEnabled(context, webViewJsAutomationEnabled) }
         }
     }

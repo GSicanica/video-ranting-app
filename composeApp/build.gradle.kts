@@ -231,8 +231,6 @@ kotlin {
                 implementation(project(":feature:prayer-presentation"))
                 implementation(project(":feature:notes-data"))
                 implementation(project(":feature:notes-presentation"))
-                implementation(project(":feature:calls-data"))
-                implementation(project(":feature:calls-presentation"))
                 implementation(project(":feature:analytics-data"))
                 implementation(project(":feature:analytics-presentation"))
                 implementation(project(":feature:settings-data"))

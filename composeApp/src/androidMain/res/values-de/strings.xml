@@ -655,7 +655,6 @@
     <string name="font_size">Schriftgröße</string>
     <string name="bible_search_title">Bibel-Suche</string>
     <string name="bible_search_placeholder">Suchbegriff (z. B. Liebe, Hoffnung, Glaube)</string>
-    <string name="calls">Anrufe</string>
     <string name="start_muted">Stumm starten</string>
     <string name="no_saved_clips">Keine gespeicherten Clips</string>
     <string name="debug_test_notification_sent">Debug-Testbenachrichtigung erfolgreich gesendet.</string>

@@ -14,7 +14,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.youtube.rating.ioscomposeapp.screens.FavoritesScreen
 import com.youtube.rating.ioscomposeapp.screens.HomeScreen
-import com.youtube.rating.ioscomposeapp.screens.CallsScreen
 import com.youtube.rating.ioscomposeapp.screens.NotesScreen
 import com.youtube.rating.ioscomposeapp.screens.PrayerScreen
 import com.youtube.rating.ioscomposeapp.screens.RateScreen
@@ -45,22 +43,6 @@ fun AppRoot() {
             val api = remember { RatingApiClient() }
             var selectedTab by remember { mutableStateOf(IosTab.Home) }
             var panel by remember { mutableStateOf(IosPanel.Main) }
-            var callsTabEnabled by remember { mutableStateOf(true) }
-
-            LaunchedEffect(Unit) {
-                callsTabEnabled = api.getCallsTabEnabled(default = true)
-                if (!callsTabEnabled && selectedTab == IosTab.Calls) {
-                    selectedTab = IosTab.Home
-                }
-            }
-
-            LaunchedEffect(callsTabEnabled) {
-                if (!callsTabEnabled && selectedTab == IosTab.Calls) {
-                    selectedTab = IosTab.Home
-                    panel = IosPanel.Main
-                }
-            }
-
             Column(modifier = Modifier.fillMaxSize()) {
                 Column(
                     modifier = Modifier
@@ -91,7 +73,6 @@ fun AppRoot() {
                                 IosTab.Home -> HomeScreen(api = api)
                                 IosTab.Prayer -> PrayerScreen(api = api)
                                 IosTab.Training -> TrainingScreen(api = api)
-                                IosTab.Calls -> CallsScreen(api = api)
                                 IosTab.Favorites -> FavoritesScreen(api = api)
                             }
                         }
@@ -115,7 +96,6 @@ fun AppRoot() {
                 HorizontalDivider()
                 BottomNav(
                     selected = selectedTab,
-                    callsTabEnabled = callsTabEnabled,
                     onSelected = {
                         selectedTab = it
                         panel = IosPanel.Main
@@ -162,19 +142,16 @@ private enum class IosTab(val label: String) {
     Home("Home"),
     Prayer("Prayer"),
     Training("Training"),
-    Calls("Calls"),
     Favorites("Favorites")
 }
 
 @Composable
 private fun BottomNav(
     selected: IosTab,
-    callsTabEnabled: Boolean,
     onSelected: (IosTab) -> Unit
 ) {
     NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-        val tabs = IosTab.entries.filterNot { it == IosTab.Calls && !callsTabEnabled }
-        tabs.forEach { tab ->
+        IosTab.entries.forEach { tab ->
             NavigationBarItem(
                 selected = selected == tab,
                 onClick = { onSelected(tab) },

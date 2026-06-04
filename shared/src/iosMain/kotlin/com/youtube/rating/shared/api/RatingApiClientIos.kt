@@ -154,30 +154,6 @@ fun RatingApiClient.getTopVideosIos(
     }
 }
 
-fun RatingApiClient.getPersonalizedFeedIos(
-    userToken: String,
-    limit: Int = 50,
-    category: String? = null,
-    languages: List<String> = emptyList(),
-    forceRefresh: Boolean = false,
-    onSuccess: (PersonalizedFeedResponse) -> Unit,
-    onError: (String) -> Unit
-) {
-    iosCallbackScope.launch {
-        try {
-            val response = getPersonalizedFeed(
-                userToken = userToken,
-                limit = limit,
-                category = category,
-                languages = languages,
-                forceRefresh = forceRefresh
-            )
-            onSuccess(response)
-        } catch (e: Exception) {
-            onError(e.message ?: "Unknown error")
-        }
-    }
-}
 
 /**
  * Fetch popular search terms for suggestions.

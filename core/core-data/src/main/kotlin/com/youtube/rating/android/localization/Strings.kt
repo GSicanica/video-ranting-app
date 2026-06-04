@@ -334,9 +334,6 @@ object Strings {
     val bibleSearchPlaceholder: String
         get() = L10n.t("bible_search_placeholder")
 
-    val calls: String
-        get() = L10n.t("calls")
-
     val startMuted: String
         get() = L10n.t("start_muted")
 

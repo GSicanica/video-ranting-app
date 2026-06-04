@@ -655,7 +655,6 @@
     <string name="font_size">Veličina slova</string>
     <string name="bible_search_title">Pretraga Biblije</string>
     <string name="bible_search_placeholder">Traži pojam (npr. ljubav, nada, vjera)</string>
-    <string name="calls">Pozivi</string>
     <string name="start_muted">Počni utišano</string>
     <string name="no_saved_clips">Nema spremljenih isječaka</string>
     <string name="debug_test_notification_sent">Debug test obavijest je uspješno poslana.</string>

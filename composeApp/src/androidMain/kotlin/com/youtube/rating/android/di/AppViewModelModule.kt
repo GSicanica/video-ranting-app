@@ -62,14 +62,6 @@ val appViewModelModule = module {
     viewModel { com.youtube.rating.android.viewmodel.RosaryViewModel(get()) }
     viewModel { com.youtube.rating.android.viewmodel.NotesViewModel(get()) }
 
-    viewModel {
-        com.youtube.rating.android.viewmodel.CallsViewModel(
-            androidApplication(),
-            get(),
-            get(),
-        )
-    }
-
     viewModel { com.youtube.rating.android.viewmodel.OfflineViewModel(offlineVideoManager = get()) }
 
     viewModel {

@@ -390,67 +390,6 @@ data class PsalmHighlightsSyncResponse(
 )
 
 @Serializable
-data class PsalmRoomRequest(
-    val userToken: String,
-    val displayName: String,
-    val gender: String,
-    val notMarried: Boolean,
-    val selectedTokens: List<String>,
-    val favoritePsalm: String? = null
-)
-
-@Serializable
-data class PsalmRoomResponse(
-    val success: Boolean,
-    val message: String? = null,
-    val room: String? = null,
-    val highlightCount: Int = 0
-)
-
-@Serializable
-data class PsalmAvailabilitySetRequest(
-    val userToken: String,
-    val gender: String,
-    val notMarried: Boolean,
-    val favoritePsalm: String,
-    val availableFrom: String,
-    val displayName: String? = null,
-    val ageYears: Int? = null
-)
-
-@Serializable
-data class PsalmAvailabilitySetResponse(
-    val success: Boolean,
-    val message: String? = null,
-    val favoritePsalm: String? = null,
-    val gender: String? = null,
-    val availableFrom: String? = null,
-    val availableTo: String? = null
-)
-
-@Serializable
-data class PsalmAvailabilityListRequest(
-    val userToken: String,
-    val gender: String,
-    val favoritePsalm: String
-)
-
-@Serializable
-data class PsalmAvailabilityItem(
-    val displayName: String,
-    val availableFrom: String? = null,
-    val availableTo: String? = null
-)
-
-@Serializable
-data class PsalmAvailabilityListResponse(
-    val success: Boolean,
-    val message: String? = null,
-    val favoritePsalm: String? = null,
-    val items: List<PsalmAvailabilityItem> = emptyList()
-)
-
-@Serializable
 data class CrashReport(
     val stackTrace: String,
     val errorMessage: String? = null,

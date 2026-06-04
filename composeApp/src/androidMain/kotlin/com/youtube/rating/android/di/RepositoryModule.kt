@@ -101,10 +101,6 @@ val repositoryModule = module {
     single<SettingsRepository> { SettingsRepositoryImpl(appContext = androidApplication()) }
     single<OfflineRepository> { OfflineRepositoryImpl(factory = get()) }
 
-    single {
-        com.youtube.rating.android.data.repository.CallsRepository(get())
-    }
-
     single<com.youtube.rating.android.data.WatchHistoryRepository> {
         com.youtube.rating.android.data.WatchHistoryRepository(get())
     }

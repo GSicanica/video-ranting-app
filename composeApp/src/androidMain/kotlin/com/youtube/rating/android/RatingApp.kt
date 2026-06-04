@@ -26,8 +26,6 @@ import com.youtube.rating.android.data.settings.SettingsRepository
 import com.youtube.rating.android.data.prefs.TrainingPrefs
 import com.youtube.rating.android.localization.ContentLanguageManager
 import com.youtube.rating.android.localization.Strings
-import com.youtube.rating.android.navigation.Screen
-import com.youtube.rating.android.network.BaseUrlProvider
 import com.youtube.rating.android.sentry.SentryLogger
 import com.youtube.rating.android.utils.BibleApiService
 import com.youtube.rating.android.utils.BibleQuoteGenerator
@@ -88,9 +86,6 @@ fun RatingApp(
     val settingsRepository: SettingsRepository = koinInject()
     val settingsState by settingsRepository.state.collectAsStateWithLifecycle()
     val homeScreenStyle = settingsState.homeScreenStyle
-    val callsTabEnabled by BaseUrlProvider.callsTabEnabledFlow()
-        .collectAsStateWithLifecycle(initialValue = BaseUrlProvider.getCallsTabEnabled())
-
     val leftDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val rightDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -115,15 +110,6 @@ fun RatingApp(
 
     LaunchedEffect(currentRoute) {
         debugUnlocked = AdminPrefs.getDebugUnlocked(context)
-    }
-
-    LaunchedEffect(callsTabEnabled, currentRoute) {
-        if (!callsTabEnabled && currentRoute == Screen.Calls.route) {
-            navController.navigate(Screen.Home.route) {
-                popUpTo(Screen.Home.route) { inclusive = true }
-                launchSingleTop = true
-            }
-        }
     }
 
     RatingAppBackHandler(
@@ -219,7 +205,6 @@ fun RatingApp(
             fastingWeeklyGoal = fastingWeeklyGoal,
             isTrainingTab = isTrainingTab,
             isInPipMode = isInPipMode,
-            callsTabEnabled = callsTabEnabled,
             floatingVideoState = floatingVideoState,
             leftDrawerState = leftDrawerState,
             rightDrawerState = rightDrawerState,

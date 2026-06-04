@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.compose.ui.platform.LocalContext
 import com.youtube.rating.android.ui.screens.AnalyticsScreen
-import com.youtube.rating.android.ui.screens.CallsScreen
 import com.youtube.rating.android.ui.screens.FavoritesScreen
 import com.youtube.rating.android.ui.screens.FastingScreen
 import com.youtube.rating.android.ui.screens.KuiverGraphScreen
@@ -103,11 +102,6 @@ fun NavGraphBuilder.mainNavigationGraph(
     // Notes Screen
     composable(Screen.Notes.route) {
         NotesScreen()
-    }
-
-    // Calls Screen
-    composable(Screen.Calls.route) {
-        CallsScreen()
     }
 
     // Analytics Screen

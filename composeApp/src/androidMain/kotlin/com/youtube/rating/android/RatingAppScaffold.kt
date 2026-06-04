@@ -47,7 +47,6 @@ internal fun RatingAppScaffold(
     fastingWeeklyGoal: Int,
     isTrainingTab: Boolean,
     isInPipMode: Boolean,
-    callsTabEnabled: Boolean,
     floatingVideoState: AppFloatingVideoState?,
     leftDrawerState: DrawerState,
     rightDrawerState: DrawerState,
@@ -69,7 +68,6 @@ internal fun RatingAppScaffold(
                     isInPipMode = isInPipMode,
                     currentRoute = currentRoute,
                     navController = navController,
-                    callsTabEnabled = callsTabEnabled,
                     onHomeReClick = onHomeReClick
                 )
             }
@@ -85,7 +83,6 @@ internal fun RatingAppScaffold(
                             isInPipMode = isInPipMode,
                             currentRoute = currentRoute,
                             navController = navController,
-                            callsTabEnabled = callsTabEnabled,
                             onHomeReClick = onHomeReClick
                         )
                     }
