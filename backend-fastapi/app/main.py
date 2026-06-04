@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import bible, csrf, health, livekit, reports
+from app.routers import bible, csrf, health, reports
 
 
 def create_app() -> FastAPI:
@@ -14,7 +14,6 @@ def create_app() -> FastAPI:
     app.include_router(csrf.router)
     app.include_router(reports.router)
     app.include_router(bible.router)
-    app.include_router(livekit.router)
     return app
 
 

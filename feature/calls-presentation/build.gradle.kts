@@ -8,5 +8,4 @@ android {
 
 dependencies {
     implementation(project(":core:core-data"))
-    implementation(libs.livekit.android.compose)
 }

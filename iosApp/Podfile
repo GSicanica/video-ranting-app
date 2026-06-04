@@ -17,9 +17,6 @@ target 'iosApp' do
   # Video Playback
   pod 'GoogleAds-IMA-iOS-SDK', '~> 3.18'
   
-  # LiveKit Integration
-  pod 'LiveKit', :git => 'https://github.com/livekit/client-sdk-swift.git', :branch => 'main'
-  
   # Analytics
   pod 'Mixpanel', '~> 4.1'
   

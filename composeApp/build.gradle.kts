@@ -69,7 +69,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"${configuredBaseUrl ?: "https://tmbv-hms.com/aYOUTUBEocjenivanje5"}\""
+                "\"${configuredBaseUrl ?: "https://tmbv-hms.com/backend-fastapi"}\""
             )
             buildConfigField("boolean", "USE_LOCAL_SERVER", "false")
             buildConfigField(
@@ -81,7 +81,7 @@ android {
         release {
             buildConfigField("boolean", "ENABLE_LOGGING", "false")
             buildConfigField("String", "DEBUG_UNLOCK_PASSWORD", "\"\"")
-            buildConfigField("String", "BASE_URL", "\"${configuredBaseUrl ?: ""}\"")
+            buildConfigField("String", "BASE_URL", "\"${configuredBaseUrl ?: "https://tmbv-hms.com/backend-fastapi"}\"")
             buildConfigField("boolean", "USE_LOCAL_SERVER", "false")
             buildConfigField(
                 "String",
@@ -175,7 +175,6 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.koin.androidx.compose)
 
-                implementation(libs.livekit.android.compose)
                 implementation(libs.security.crypto)
 
                 implementation(libs.media3.exoplayer)

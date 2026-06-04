@@ -6,9 +6,10 @@ from dataclasses import dataclass
 class Settings:
     environment: str = os.getenv("APP_ENV", "development")
     youversion_api_key: str = os.getenv("YOUVERSION_API_KEY", "")
-    livekit_api_key: str = os.getenv("LIVEKIT_API_KEY", "")
-    livekit_api_secret: str = os.getenv("LIVEKIT_API_SECRET", "")
-    livekit_url: str = os.getenv("LIVEKIT_URL", "")
+    legacy_base_url: str = os.getenv(
+        "LEGACY_BASE_URL",
+        "https://tmbv-hms.com/aYOUTUBEocjenivanje5",
+    )
     csrf_token: str = os.getenv("CSRF_TOKEN", "local-dev-csrf-token")
 
 

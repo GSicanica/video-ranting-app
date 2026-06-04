@@ -180,8 +180,6 @@ fun SettingsScreen(
         val networkDebugEntries by NetworkDebugStore.entries.collectAsStateWithLifecycle(initialValue = emptyList())
     val isUploadServerTesting by viewModel.isUploadServerTesting.collectAsStateWithLifecycle()
     val uploadServerTestResult by viewModel.uploadServerTestResult.collectAsStateWithLifecycle()
-    val isLiveKitTesting by viewModel.isLiveKitTesting.collectAsStateWithLifecycle()
-    val liveKitTestResult by viewModel.liveKitTestResult.collectAsStateWithLifecycle()
         val isGeneratingUserId by viewModel.isGeneratingUserId.collectAsStateWithLifecycle()
         val generatedUserId by viewModel.generatedUserId.collectAsStateWithLifecycle()
         val reportStatus by viewModel.reportStatus.collectAsStateWithLifecycle()
@@ -890,19 +888,6 @@ fun SettingsScreen(
                             onClick = {
                                 if (isUploadServerTesting) return@SettingsItem
                                 viewModel.testUploadServerPing()
-                            }
-                        )
-                        SettingsItem(
-                            icon = Icons.Default.Cloud,
-                            title = "🧪 LiveKit ping",
-                            subtitle = if (isLiveKitTesting) {
-                                "Testiram..."
-                            } else {
-                                liveKitTestResult ?: "Provjeri LiveKit token endpoint"
-                            },
-                            onClick = {
-                                if (isLiveKitTesting) return@SettingsItem
-                                viewModel.testLiveKitPing()
                             }
                         )
                         SettingsItem(

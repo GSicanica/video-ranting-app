@@ -445,8 +445,8 @@ USE_LOCAL_SERVER
 ```text
 local.properties BASE_URL
 or -Papp.baseUrl=...
-or debug default https://tmbv-hms.com/aYOUTUBEocjenivanje5
-or empty release default
+or debug default https://tmbv-hms.com/backend-fastapi
+or release default https://tmbv-hms.com/backend-fastapi
 ```
 
 Bible asset sync:
@@ -679,10 +679,6 @@ GOOGLE_MAPS_API_KEY=...
 
 `YOUVERSION_API_KEY` is a backend secret. Configure it in the FastAPI service
 environment, not in Android `local.properties`.
-
-`LIVEKIT_API_KEY` and `LIVEKIT_API_SECRET` are backend secrets. Configure them
-in the FastAPI service environment so Android only receives short-lived room
-tokens from `/api/livekit/token.php`.
 
 Do not commit Sentry DSNs or provider secrets. Android release builds default to
 an empty Sentry DSN unless CI/local properties provide one explicitly.

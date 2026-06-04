@@ -1,7 +1,6 @@
 package com.youtube.rating.android.data.repository
 
 import com.youtube.rating.shared.api.RatingApiClient
-import com.youtube.rating.shared.models.LiveKitTokenResponse
 import com.youtube.rating.shared.models.PsalmHighlightsSyncResponse
 import com.youtube.rating.shared.models.PsalmAvailabilityListResponse
 import com.youtube.rating.shared.models.PsalmAvailabilitySetResponse
@@ -10,8 +9,6 @@ import com.youtube.rating.shared.models.PsalmRoomResponse
 class CallsRepository(
     private val apiClient: RatingApiClient
 ) {
-    fun getCallsUrl(): String = "https://rtc.tmbv-hms.com"
-
     suspend fun syncPsalmHighlights(
         userToken: String,
         highlights: List<String>,
@@ -43,20 +40,6 @@ class CallsRepository(
             notMarried = notMarried,
             selectedTokens = selectedTokens,
             favoritePsalm = favoritePsalm
-        )
-    }
-
-    suspend fun getLiveKitToken(
-        userToken: String,
-        room: String,
-        identity: String,
-        name: String
-    ): LiveKitTokenResponse {
-        return apiClient.getLiveKitToken(
-            userToken = userToken,
-            room = room,
-            identity = identity,
-            name = name
         )
     }
 

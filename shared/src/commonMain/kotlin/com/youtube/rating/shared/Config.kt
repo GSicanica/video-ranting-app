@@ -11,7 +11,7 @@ package com.youtube.rating.shared
  */
 
 // Production server URL (default)
-private const val PRODUCTION_URL = "https://tmbv-hms.com/aYOUTUBEocjenivanje5"
+private const val PRODUCTION_URL = "https://tmbv-hms.com/backend-fastapi"
 
 private fun normalizeBaseUrl(url: String): String = url.trimEnd('/')
 

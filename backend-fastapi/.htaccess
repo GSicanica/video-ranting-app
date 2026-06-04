@@ -1,0 +1,17 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/tmbvhmsc/public_html/backend-fastapi"
+PassengerBaseURI "/backend-fastapi"
+PassengerPython "/home/tmbvhmsc/virtualenv/public_html/backend-fastapi/3.11/bin/python"
+PassengerAppLogFile "/home/tmbvhmsc/public_html/backend-fastapi/passenger.log"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+SetEnv APP_ENV production
+SetEnv CSRF_TOKEN change-me-on-deploy
+SetEnv no-gzip 1
+SetEnv no-brotli 1
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
+
+SetEnv no-gzip 1
+SetEnv no-brotli 1

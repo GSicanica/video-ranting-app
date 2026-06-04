@@ -78,17 +78,7 @@ internal fun CallsScreen(
                 return@runCatching
             }
             val roomId = roomResp.room ?: return@runCatching
-            val tokenResp = api.getLiveKitToken(
-                userToken = token,
-                room = roomId,
-                identity = token.take(24),
-                name = displayName.ifBlank { "iOS User" }
-            )
-            status = if (tokenResp.success) {
-                "Room $roomId ready"
-            } else {
-                "Token error: ${tokenResp.message ?: "unknown"}"
-            }
+            status = "Room $roomId found; video call is currently disabled"
         }.onFailure {
             error = UiError(it.message ?: "Unknown error")
         }

@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.youtube.rating.android.data.repository.CallsRepository
 import com.youtube.rating.android.data.prefs.CallsPrefs
-import com.youtube.rating.android.data.prefs.InstallPrefs
 import com.youtube.rating.android.data.prefs.PsalmPrefs
 import com.youtube.rating.android.utils.UserTokenManager
 import com.youtube.rating.android.core.LegacyBuildConfig as BuildConfig
@@ -20,17 +19,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.util.Log
-import java.util.UUID
 import java.time.OffsetDateTime
 import java.time.Instant
 
 data class CallsUiState(
-    val callsUrl: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val livekitUrl: String? = null,
-    val livekitToken: String? = null,
     val roomName: String? = null,
     val displayName: String = "",
     val ageYears: String = "",
@@ -43,10 +37,7 @@ data class CallsUiState(
     val availabilityItems: List<PsalmAvailabilityItem> = emptyList(),
     val selectedTokens: Set<String> = emptySet(),
     val availableTokens: List<String> = emptyList(),
-    val tooManyHighlights: Boolean = false,
-    val micEnabled: Boolean = true,
-    val camEnabled: Boolean = true,
-    val connectLiveKit: Boolean = false
+    val tooManyHighlights: Boolean = false
 )
 
 class CallsViewModel(
@@ -55,14 +46,9 @@ class CallsViewModel(
     private val userTokenManager: UserTokenManager
 ) : AndroidViewModel(application) {
 
-    private val defaultLiveKitUrl: String = "wss://rtc.tmbv-hms.com"
     private val shouldLockFavoritePsalm: Boolean = !BuildConfig.DEBUG
 
-    private val _uiState = MutableStateFlow(
-        CallsUiState(
-            callsUrl = repository.getCallsUrl()
-        )
-    )
+    private val _uiState = MutableStateFlow(CallsUiState())
     val uiState: StateFlow<CallsUiState> = _uiState
 
     private val highlightsFlow = PsalmPrefs.highlightedPsalmLinesFlow(getApplication())
@@ -137,25 +123,6 @@ class CallsViewModel(
                 _uiState.update { it.copy(favoritePsalm = trimmed, favoritePsalmLocked = shouldLockFavoritePsalm) }
             }
         }
-    }
-
-    private fun normalizeLiveKitUrl(raw: String?): String? {
-        val trimmed = raw?.trim().orEmpty()
-        if (trimmed.isBlank()) return null
-        val noTrailingSlash = trimmed.trimEnd('/')
-        return when {
-            noTrailingSlash.startsWith("wss://", ignoreCase = true) -> noTrailingSlash
-            noTrailingSlash.startsWith("ws://", ignoreCase = true) -> noTrailingSlash
-            noTrailingSlash.startsWith("https://", ignoreCase = true) ->
-                "wss://" + noTrailingSlash.removePrefix("https://")
-            noTrailingSlash.startsWith("http://", ignoreCase = true) ->
-                "ws://" + noTrailingSlash.removePrefix("http://")
-            else -> noTrailingSlash
-        }
-    }
-
-    fun refreshCallsUrl() {
-        _uiState.update { it.copy(callsUrl = repository.getCallsUrl()) }
     }
 
     fun onDisplayNameChange(value: String) {
@@ -312,19 +279,6 @@ class CallsViewModel(
         }
     }
 
-    fun onMicEnabledChange(value: Boolean) {
-        _uiState.update { it.copy(micEnabled = value) }
-    }
-
-    fun onCamEnabledChange(value: Boolean) {
-        _uiState.update { it.copy(camEnabled = value) }
-    }
-
-    fun disconnect() {
-        _uiState.update { it.copy(connectLiveKit = false) }
-        clearLiveKitSession()
-    }
-
     fun join() {
         viewModelScope.launch {
             val current = _uiState.value
@@ -372,9 +326,7 @@ class CallsViewModel(
                 selectedTokens = filledSelected,
                 highlights = current.availableTokens.toSet()
             )
-            if (ok) {
-                _uiState.update { it.copy(connectLiveKit = true) }
-            }
+            if (ok) refreshAvailability()
         }
     }
 
@@ -390,19 +342,6 @@ class CallsViewModel(
         try {
             @Suppress("DEPRECATION")
             val userToken = userTokenManager.getUserTokenAsyncAutoRegister()
-            // Identity MUST be unique per device, otherwise two devices can overwrite each other in the same room.
-            val identity = run {
-                val ctx = getApplication<android.app.Application>().applicationContext
-                val installId = InstallPrefs.getInstallId(ctx)
-                if (!installId.isNullOrBlank()) {
-                    installId
-                } else {
-                    // Fallback: generate and persist a random per-install id.
-                    val generated = UUID.randomUUID().toString()
-                    InstallPrefs.setInstallId(ctx, generated)
-                    generated
-                }
-            }
 
             val syncRes = repository.syncPsalmHighlights(
                 userToken = userToken,
@@ -435,31 +374,10 @@ class CallsViewModel(
                 return@withContext false
             }
 
-            val lkRes = repository.getLiveKitToken(
-                userToken = userToken,
-                room = roomName,
-                identity = identity,
-                name = displayName
-            )
-            if (!lkRes.success || lkRes.token.isNullOrBlank()) {
-                _uiState.update { it.copy(errorMessage = lkRes.message ?: "Neuspjesan token") }
-                return@withContext false
-            }
-
-            Log.d(
-                "LiveKitCalls",
-                "token ok room=$roomName identity=${identity.take(8)} url=${lkRes.url} tokenLen=${lkRes.token?.length ?: 0}"
-            )
-
             _uiState.update { current ->
-                // Always prefer our known-good reverse proxy URL (TLS + proper headers via nginx).
-                // This avoids devices connecting directly to ws://IP:7880 and failing due to network policy/TLS.
-                val url = defaultLiveKitUrl
                 current.copy(
-                    livekitToken = lkRes.token,
-                    livekitUrl = url ?: current.livekitUrl,
                     roomName = roomName,
-                    connectLiveKit = true
+                    errorMessage = "Termin je pronađen, ali video poziv trenutno nije aktivan."
                 )
             }
             return@withContext true
@@ -471,7 +389,4 @@ class CallsViewModel(
         }
     }
 
-    fun clearLiveKitSession() {
-        _uiState.update { it.copy(livekitToken = null, roomName = null, errorMessage = null, isLoading = false) }
-    }
 }

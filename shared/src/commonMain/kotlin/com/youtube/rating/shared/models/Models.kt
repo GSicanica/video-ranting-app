@@ -408,22 +408,6 @@ data class PsalmRoomResponse(
 )
 
 @Serializable
-data class LiveKitTokenRequest(
-    val userToken: String,
-    val room: String,
-    val identity: String,
-    val name: String
-)
-
-@Serializable
-data class LiveKitTokenResponse(
-    val success: Boolean,
-    val message: String? = null,
-    val token: String? = null,
-    val url: String? = null
-)
-
-@Serializable
 data class PsalmAvailabilitySetRequest(
     val userToken: String,
     val gender: String,

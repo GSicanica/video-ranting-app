@@ -103,11 +103,6 @@ class SettingsViewModel(
     private val _uploadServerTestResult = MutableStateFlow<String?>(null)
     val uploadServerTestResult: StateFlow<String?> = _uploadServerTestResult.asStateFlow()
 
-    private val _isLiveKitTesting = MutableStateFlow(false)
-    val isLiveKitTesting: StateFlow<Boolean> = _isLiveKitTesting.asStateFlow()
-
-    private val _liveKitTestResult = MutableStateFlow<String?>(null)
-    val liveKitTestResult: StateFlow<String?> = _liveKitTestResult.asStateFlow()
 
     private val _isGeneratingUserId = MutableStateFlow(false)
     val isGeneratingUserId: StateFlow<Boolean> = _isGeneratingUserId.asStateFlow()
@@ -345,35 +340,6 @@ class SettingsViewModel(
             _uploadServerTestResult.value = result
             NetworkDebugStore.add("UPLOAD SERVER POST TEST $STREAM_UPLOAD_ENDPOINT => $result")
             _isUploadServerTesting.value = false
-        }
-    }
-
-    fun testLiveKitPing() {
-        if (_isLiveKitTesting.value) return
-        makeIOCall {
-            _isLiveKitTesting.value = true
-            val token = userTokenManager.getUserTokenAsync()
-            if (token.isNullOrBlank()) {
-                _liveKitTestResult.value = "❌ Nema user tokena"
-                _isLiveKitTesting.value = false
-                return@makeIOCall
-            }
-            val result = runCatching {
-                val response = apiClient.getLiveKitToken(
-                    userToken = token,
-                    room = "admin_ping",
-                    identity = "admin_ping_${token.take(6)}",
-                    name = "Admin Ping"
-                )
-                if (!response.token.isNullOrBlank()) {
-                    "✅ Token OK"
-                } else {
-                    "❌ Prazan token"
-                }
-            }.getOrElse { "❌ Greška: ${it.message}" }
-            _liveKitTestResult.value = result
-            NetworkDebugStore.add("LIVEKIT PING => $result")
-            _isLiveKitTesting.value = false
         }
     }
 

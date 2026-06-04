@@ -42,8 +42,6 @@ import com.youtube.rating.shared.models.PsalmHighlightsSyncRequest
 import com.youtube.rating.shared.models.PsalmHighlightsSyncResponse
 import com.youtube.rating.shared.models.PsalmRoomRequest
 import com.youtube.rating.shared.models.PsalmRoomResponse
-import com.youtube.rating.shared.models.LiveKitTokenRequest
-import com.youtube.rating.shared.models.LiveKitTokenResponse
 import com.youtube.rating.shared.models.PsalmAvailabilityListRequest
 import com.youtube.rating.shared.models.PsalmAvailabilityListResponse
 import com.youtube.rating.shared.models.PsalmAvailabilitySetRequest
@@ -1288,29 +1286,6 @@ class RatingApiClient(
                         notMarried = notMarried,
                         selectedTokens = selectedTokens,
                         favoritePsalm = favoritePsalm
-                    )
-                )
-            }.body()
-        }
-
-    suspend fun getLiveKitToken(
-        userToken: String,
-        room: String,
-        identity: String,
-        name: String
-    ): LiveKitTokenResponse =
-        executeWithRetry(allowRetry = false) {
-            val token = getCsrfToken(forceRefresh = false)
-            client.post("$baseUrl/api/livekit/token.php") {
-                contentType(ContentType.Application.Json)
-                headers { append(CSRF_TOKEN_HEADER, token) }
-                addDevelopmentHeaders()
-                setBody(
-                    LiveKitTokenRequest(
-                        userToken = userToken,
-                        room = room,
-                        identity = identity,
-                        name = name
                     )
                 )
             }.body()
