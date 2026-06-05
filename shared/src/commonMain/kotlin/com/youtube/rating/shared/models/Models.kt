@@ -675,27 +675,6 @@ data class PsalmDto(
     val text: String
 )
 
-// ==========================================
-// APP USAGE TRACKING MODELS
-// ==========================================
-
-/**
- * App usage session data
- */
-@Serializable
-data class AppUsageSession(
-    val sessionId: String,
-    val startTime: Long,
-    val endTime: Long? = null,
-    val duration: Long = 0, // in milliseconds
-    val deviceId: String,
-    val platform: String, // "android" or "ios"
-    val appVersion: String,
-    val userToken: String? = null,
-    val featuresUsed: List<String> = emptyList(), // list of features accessed
-    val screenTime: Map<String, Long> = emptyMap() // screen name -> time spent
-)
-
 /**
  * Daily usage statistics
  */
@@ -806,17 +785,6 @@ data class UserInsights(
     val peakUsageHours: List<Int>,
     val userRetention: Double,
     val featureAdoption: Map<String, Double> // feature -> adoption percentage
-)
-
-/**
- * App usage tracking request
- */
-@Serializable
-data class TrackUsageRequest(
-    val sessionId: String,
-    val action: String, // "start", "end", "feature_used", "screen_view"
-    val timestamp: Long,
-    val data: Map<String, String> = emptyMap() // additional context data
 )
 
 /**

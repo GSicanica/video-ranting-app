@@ -8,7 +8,6 @@ import com.youtube.rating.shared.data.PrayerRequestDto
 import com.youtube.rating.shared.data.SetPrayerPrayedBody
 import com.youtube.rating.shared.models.AnonymousRegisterResponse
 import com.youtube.rating.shared.models.ApiResponse
-import com.youtube.rating.shared.models.AppUsageSession
 import com.youtube.rating.shared.models.BlockedUsersResponse
 import com.youtube.rating.shared.models.BibleSearchResponse
 import com.youtube.rating.shared.models.BulkRatingRequest
@@ -39,7 +38,6 @@ import com.youtube.rating.shared.models.SyncFavoritesRequest
 import com.youtube.rating.shared.models.SyncFavoritesResponse
 import com.youtube.rating.shared.models.PsalmHighlightsSyncRequest
 import com.youtube.rating.shared.models.PsalmHighlightsSyncResponse
-import com.youtube.rating.shared.models.TrackUsageRequest
 import com.youtube.rating.shared.models.WatchHistoryClearRequest
 import com.youtube.rating.shared.models.WatchHistoryRecordRequest
 import com.youtube.rating.shared.models.WatchHistoryToggleRequest
@@ -1490,34 +1488,6 @@ class RatingApiClient(
         }
     }
 
-    // ==========================================
-    // APP USAGE TRACKING FUNCTIONS
-    // ==========================================
-
-    /**
-     * Track app usage session start/end
-     */
-    suspend fun trackAppUsage(request: TrackUsageRequest): ApiResponse =
-        executeWithRetry(allowRetry = false) {
-            val response = client.post("$baseUrl/api/analytics/track-usage.php") {
-                contentType(ContentType.Application.Json)
-                setBody(request)
-            }
-            response.body()
-        }
-
-    /**
-     * Submit complete app usage session
-     */
-    suspend fun submitAppUsageSession(session: AppUsageSession): ApiResponse =
-        executeWithRetry(allowRetry = false) {
-            val response = client.post("$baseUrl/api/analytics/submit-session.php") {
-                contentType(ContentType.Application.Json)
-                setBody(session)
-            }
-            response.body()
-        }
-
     /**
      * Get usage analytics for user
      */
@@ -1564,18 +1534,6 @@ class RatingApiClient(
             endDate?.let { parameter("endDate", it) }
         }.body()
     }
-
-    /**
-     * Track search term for popular suggestions
-     */
-    suspend fun trackSearchTerm(term: String, language: String = "unknown"): ApiResponse =
-        executeWithRetry(allowRetry = false) {
-            val response = client.post("$baseUrl/api/v2/search/track.php") {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("term" to term, "language" to language))
-            }
-            response.body()
-        }
 
     /**
      * Get popular search terms for suggestions

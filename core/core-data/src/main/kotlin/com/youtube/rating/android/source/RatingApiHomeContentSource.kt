@@ -68,8 +68,4 @@ class RatingApiHomeContentSource(
     override suspend fun reportVideo(videoId: String, userToken: String, reason: String): ApiResponse {
         return apiClient.reportVideo(videoId, userToken, reason)
     }
-
-    override suspend fun trackSearchTerm(term: String, language: String): ApiResponse {
-        return apiClient.trackSearchTerm(term, language)
-    }
 }

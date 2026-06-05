@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.youtube.rating.android.utils.UserTokenManager
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.shared.api.RatingApiClient
 import com.youtube.rating.shared.models.ApiResponse
 import com.youtube.rating.shared.models.RatingRequest
@@ -44,7 +43,6 @@ class RatingViewModel(
     private val apiClient: RatingApiClient,
     private val youTubeInfoService: YouTubeInfoService,
     private val userTokenManager: UserTokenManager,
-    private val analyticsManager: AnalyticsManager,
     private val watchHistoryRepository: com.youtube.rating.android.data.WatchHistoryRepository
 ) : ViewModel() {
 
@@ -300,20 +298,6 @@ class RatingViewModel(
                             ratedAt = ratedAt
                         )
                     }
-                    
-                    // Track video rating analytics
-                    runCatching {
-                        analyticsManager.trackVideoRating(
-                            videoId = finalVideoId ?: "",
-                            videoTitle = finalTitle ?: "",
-                            videoChannel = finalChannel ?: "",
-                            love = love,
-                            faith = faith,
-                            hope = hope,
-                            category = (category ?: "").toString(),
-                            language = finalLanguage
-                        )
-                    }
                 }
                 _submitState.value =
                     if (response.success) SubmitState.Success
@@ -433,14 +417,13 @@ class RatingViewModelFactory(
     private val apiClient: RatingApiClient,
     private val youTubeInfoService: YouTubeInfoService,
     private val userTokenManager: UserTokenManager,
-    private val analyticsManager: AnalyticsManager,
     private val watchHistoryRepository: com.youtube.rating.android.data.WatchHistoryRepository
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RatingViewModel::class.java)) {
-            return RatingViewModel(application = application, apiClient = apiClient, youTubeInfoService = youTubeInfoService, userTokenManager = userTokenManager, analyticsManager = analyticsManager, watchHistoryRepository = watchHistoryRepository) as T
+            return RatingViewModel(application = application, apiClient = apiClient, youTubeInfoService = youTubeInfoService, userTokenManager = userTokenManager, watchHistoryRepository = watchHistoryRepository) as T
         }
         val e = IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         com.youtube.rating.android.sentry.SentryLogger.captureException(

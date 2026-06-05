@@ -76,7 +76,6 @@ import coil.request.ImageRequest
 import com.youtube.rating.android.localization.Strings
 import com.youtube.rating.android.data.OfflineRepository
 import com.youtube.rating.android.storage.FavoritesGateway
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.android.utils.DeepLinkUtil
 import com.youtube.rating.android.utils.ThumbnailHelper
 import com.youtube.rating.android.utils.UserTokenManager

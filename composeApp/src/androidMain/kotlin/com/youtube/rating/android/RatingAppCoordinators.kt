@@ -3,16 +3,7 @@ package com.youtube.rating.android
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
 import com.youtube.rating.android.api.BugReportApiClient
 import com.youtube.rating.android.localization.Strings
@@ -39,46 +30,6 @@ internal fun AppStringsCoordinator(
 
     LaunchedEffect(selectedContentLanguages) {
         Strings.selectedContentLanguages = selectedContentLanguages
-    }
-}
-
-@Composable
-internal fun ScreenMetricsTracker(
-    currentRoute: String?,
-    lifecycleOwner: LifecycleOwner
-) {
-    var lastScreen by remember { mutableStateOf<String?>(null) }
-    var screenStartMs by remember { mutableLongStateOf(0L) }
-
-    LaunchedEffect(currentRoute) {
-        val now = System.currentTimeMillis()
-        val newScreen = normalizeRouteForMetrics(route = currentRoute)
-        if (lastScreen != null && screenStartMs > 0L) {
-            trackScreenDurationMetric(screen = lastScreen ?: "unknown", durationMs = now - screenStartMs)
-        }
-        lastScreen = newScreen
-        screenStartMs = now
-    }
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                val now = System.currentTimeMillis()
-                if (lastScreen != null && screenStartMs > 0L) {
-                    trackScreenDurationMetric(
-                        screen = lastScreen ?: "unknown",
-                        durationMs = now - screenStartMs
-                    )
-                }
-                screenStartMs = 0L
-            } else if (event == Lifecycle.Event.ON_START) {
-                if (screenStartMs == 0L && lastScreen != null) {
-                    screenStartMs = System.currentTimeMillis()
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 }
 

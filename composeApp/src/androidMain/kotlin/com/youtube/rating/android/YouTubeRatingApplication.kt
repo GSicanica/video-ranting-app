@@ -30,13 +30,11 @@ import com.youtube.rating.android.sentry.SentryNetworkInterceptor
 import com.youtube.rating.android.sentry.SentryUserContextProvider
 import com.youtube.rating.android.storage.FastingManager
 import com.youtube.rating.android.storage.FavoritesManager
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.android.utils.AppScope
 import com.youtube.rating.android.utils.AutoBackupManager
 import com.youtube.rating.android.utils.BibleReminderScheduler
 import com.youtube.rating.android.utils.CrashReportHandler
 import com.youtube.rating.android.utils.FastingReminderScheduler
-import com.youtube.rating.android.utils.MemoryProfiler
 import com.youtube.rating.android.utils.PerformanceProfile
 import com.youtube.rating.android.utils.UserTokenManager
 import com.youtube.rating.shared.api.AndroidCacheDirProvider
@@ -64,7 +62,6 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import com.youtube.rating.android.data.prefs.AdminPrefs
-import com.youtube.rating.android.data.prefs.AppUsagePrefs
 import com.youtube.rating.android.data.prefs.InstallPrefs
 import com.youtube.rating.android.domain.usecase.AutoBackupIfNeededUseCase
 import com.youtube.rating.android.domain.usecase.MigrationUseCase
@@ -80,7 +77,6 @@ class YouTubeRatingApplication : Application(), ImageLoaderFactory, Configuratio
     // NOTE: Do not resolve Koin dependencies until after startKoin() in onCreate()
     private val apiClient: RatingApiClient by inject(RatingApiClient::class.java)
     val userTokenManager: UserTokenManager by inject(UserTokenManager::class.java)
-    private val analyticsManager: AnalyticsManager by inject(AnalyticsManager::class.java)
     private val autoBackupManager: AutoBackupManager by inject(AutoBackupManager::class.java)
     private val migrationUseCase: MigrationUseCase by inject(MigrationUseCase::class.java)
     private val autoBackupIfNeededUseCase: AutoBackupIfNeededUseCase by inject(AutoBackupIfNeededUseCase::class.java)
@@ -90,9 +86,6 @@ class YouTubeRatingApplication : Application(), ImageLoaderFactory, Configuratio
     private val biblePlannerManager: com.youtube.rating.android.storage.BiblePlannerManager by inject(
         com.youtube.rating.android.storage.BiblePlannerManager::class.java
     )
-
-    // App usage time tracking
-    private var appStartTime: Long = 0L
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default + SentryCoroutineExceptionHandler)
 
@@ -162,35 +155,14 @@ class YouTubeRatingApplication : Application(), ImageLoaderFactory, Configuratio
 
         Logger.info("Application", "Koin DI initialized - All dependencies ready")
 
-        // 6) Process lifecycle observer for usage tracking
+        // 6) Process lifecycle observer for lightweight foreground/background logging
         lifecycleObserver = object : DefaultLifecycleObserver {
             override fun onStart(owner: LifecycleOwner) {
-                appStartTime = System.currentTimeMillis()
-                if (deferredInitStarted.get()) {
-                    analyticsManager.onAppForeground()
-                }
                 if (LogConfig.ENABLE_LOGS) Logger.debug("Application", "App came to foreground")
             }
 
             override fun onStop(owner: LifecycleOwner) {
-                if (appStartTime > 0L) {
-                    val sessionTime = System.currentTimeMillis() - appStartTime
-                    // Report session duration to Sentry (distribution metric).
-                    SentryLogger.metricDistribution("app_session_ms", sessionTime.toDouble())
-                    appScope.launch(ioDispatcher) {
-                        val token = userTokenManager.getUserTokenAsync()
-                        if (!token.isNullOrBlank()) {
-                            AppUsagePrefs.addAppUsageTimeMs(this@YouTubeRatingApplication, sessionTime, token)
-                        }
-                    }
-                    if (LogConfig.ENABLE_LOGS) {
-                        Logger.debug("Application", "App background, session: ${sessionTime}ms")
-                    }
-                }
-                if (deferredInitStarted.get()) {
-                    analyticsManager.onAppBackground()
-                }
-                appStartTime = 0L
+                if (LogConfig.ENABLE_LOGS) Logger.debug("Application", "App went to background")
             }
         }
         lifecycleObserver?.let { ProcessLifecycleOwner.get().lifecycle.addObserver(it) }
@@ -345,10 +317,6 @@ class YouTubeRatingApplication : Application(), ImageLoaderFactory, Configuratio
 	                    )
 	                }
 
-	                // Trigger an initial foreground event once deferred init is ready.
-	                Handler(Looper.getMainLooper()).post {
-	                    runCatching { analyticsManager.onAppForeground() }
-	                }
 	            }
 	        }
 	    }
@@ -392,11 +360,8 @@ class YouTubeRatingApplication : Application(), ImageLoaderFactory, Configuratio
 
         super.onTerminate()
 
-        analyticsManager.forceEndSession()
-
         try {
             autoBackupManager.cleanup()
-            MemoryProfiler.cleanup()
             CrashReportHandler.cleanup()
 
             runCatching {

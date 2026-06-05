@@ -11,7 +11,6 @@ import com.youtube.rating.android.domain.usecase.home.GetTopVideosUseCase
 import com.youtube.rating.android.domain.usecase.home.ReportVideoUseCase
 import com.youtube.rating.android.domain.usecase.home.SearchVideosUseCase
 import com.youtube.rating.android.storage.FavoritesGateway
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.android.utils.SaintOfDayManager
 import com.youtube.rating.android.utils.UserTokenManager
 import com.youtube.rating.android.viewmodel.HomeViewModelFactory
@@ -31,7 +30,6 @@ internal data class HomeScreenDependencies(
     val searchVideosUseCase: SearchVideosUseCase,
     val reportVideoUseCase: ReportVideoUseCase,
     val userTokenManager: UserTokenManager,
-    val analyticsManager: AnalyticsManager,
     val watchHistoryRepository: WatchHistoryRepository,
     val saintOfDayManager: SaintOfDayManager
 ) {
@@ -41,7 +39,6 @@ internal data class HomeScreenDependencies(
             apiClient = apiClient,
             youTubeInfoService = youTubeInfoService,
             userTokenManager = userTokenManager,
-            analyticsManager = analyticsManager,
             watchHistoryRepository = watchHistoryRepository
         )
 
@@ -75,7 +72,6 @@ internal fun rememberHomeScreenDependencies(): HomeScreenDependencies =
         searchVideosUseCase = koinInject(),
         reportVideoUseCase = koinInject(),
         userTokenManager = koinInject(),
-        analyticsManager = koinInject(),
         watchHistoryRepository = koinInject(),
         saintOfDayManager = koinInject()
     )

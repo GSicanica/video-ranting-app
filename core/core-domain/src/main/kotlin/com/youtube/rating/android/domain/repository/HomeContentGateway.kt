@@ -33,5 +33,4 @@ interface HomeContentGateway {
     ): PaginatedSearchResponse
 
     suspend fun reportVideo(videoId: String, userToken: String, reason: String): ApiResponse
-    suspend fun trackSearchTerm(term: String, language: String): ApiResponse
 }

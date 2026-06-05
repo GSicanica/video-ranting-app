@@ -17,14 +17,6 @@ val appManagerModule = module {
     single { AdminManager(context = androidContext()) }
 
     single {
-        com.youtube.rating.android.utils.AnalyticsManager(
-            context = androidContext(),
-            apiClient = get(),
-            userTokenManager = get(),
-        )
-    }
-
-    single {
         ViewPreferencesManager.init(androidContext())
         ViewPreferencesManager
     }

@@ -176,7 +176,6 @@ import com.youtube.rating.android.util.VideoSource
 import com.youtube.rating.android.util.detectVideoSource
 import com.youtube.rating.android.util.extractYouTubeVideoId
 import com.youtube.rating.android.utils.AdminManager
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.android.utils.SaintOfDayManager
 import com.youtube.rating.android.utils.ThumbnailHelper
 import com.youtube.rating.android.utils.UserTokenManager

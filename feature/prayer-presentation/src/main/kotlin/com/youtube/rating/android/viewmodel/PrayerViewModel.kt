@@ -8,7 +8,6 @@ import com.youtube.rating.android.repository.Encouragement
 import com.youtube.rating.android.repository.PrayerRepository
 import com.youtube.rating.android.localization.Strings
 import com.youtube.rating.android.repository.PrayerRequest
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.shared.utils.Logger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -21,7 +20,6 @@ import com.youtube.rating.android.data.prefs.TrainingPrefs
 class PrayerViewModel(
     private val appContext: Context,
     private val repo: PrayerRepository,
-    private val analyticsManager: AnalyticsManager,
     private val pageSize: Int = 20
 ) : ViewModel() {
 
@@ -116,9 +114,6 @@ class PrayerViewModel(
                 .onSuccess { created ->
                     // ubaci na vrh
                     _ui.value = _ui.value.copy(items = listOf(created) + _ui.value.items)
-                    
-                    // Track prayer request analytics
-                    analyticsManager.trackPrayerRequest()
                 }
                 .onFailure { e ->
                     _ui.value = _ui.value.copy(createError = UiText.Dynamic(e.message ?: Strings.errorAdding))
@@ -220,10 +215,6 @@ class PrayerViewModel(
                             if (it.id == requestId) it.copy(encouragementCount = it.encouragementCount + 1) else it
                         }
                     )
-                    
-                    // Track encouragement analytics
-                    analyticsManager.trackEncouragement()
-
                     TrainingPrefs.incrementTrainingEncouragementDoneToday(
                         context = appContext.applicationContext,
                         delta = 1

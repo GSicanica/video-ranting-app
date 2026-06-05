@@ -184,26 +184,6 @@ object LogExporter {
             appendLine("Processors: ${Runtime.getRuntime().availableProcessors()}")
             appendLine()
             
-            if (MemoryProfiler.isMonitoring()) {
-                appendLine("📊 MEMORY PROFILER")
-                appendLine("─────────────────────────────────────")
-                val snapshot = MemoryProfiler.getLastSnapshot()
-                if (snapshot != null) {
-                    appendLine("Heap Used: ${DeviceInfoHelper.formatBytes(snapshot.heapUsed)}")
-                    appendLine("Heap Max: ${DeviceInfoHelper.formatBytes(snapshot.heapMax)}")
-                    appendLine("Heap Free: ${DeviceInfoHelper.formatBytes(snapshot.heapFree)}")
-                    appendLine("Native Used: ${DeviceInfoHelper.formatBytes(snapshot.nativeHeapUsed)}")
-                }
-                appendLine()
-            }
-            
-            if (FpsMonitor.isMonitoring()) {
-                appendLine("🎯 FPS MONITOR")
-                appendLine("─────────────────────────────────────")
-                appendLine(FpsMonitor.getFormattedStats())
-                appendLine()
-            }
-            
             appendLine("═══════════════════════════════════════")
         }
     }

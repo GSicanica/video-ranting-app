@@ -54,7 +54,6 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
@@ -1029,29 +1028,6 @@ fun SettingsScreen(
                         )
 
                         SettingsItem(
-                            icon = Icons.Default.Memory,
-                            title = "💾 Memory Profiler",
-                            subtitle = "Prati memory usage i GC događaje (${if (com.youtube.rating.android.utils.MemoryProfiler.isMonitoring()) "RADI" else "STOPIRAN"})",
-                            onClick = {
-                                if (com.youtube.rating.android.utils.MemoryProfiler.isMonitoring()) {
-                                    com.youtube.rating.android.utils.MemoryProfiler.stopMonitoring()
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        "Memory profiling stopiran",
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    com.youtube.rating.android.utils.MemoryProfiler.startMonitoring()
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        "Memory profiling pokrenut",
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        )
-
-                        SettingsItem(
                             icon = Icons.Default.Search,
                             title = "🗓️ Svetac dana (datum)",
                             subtitle = "Dohvati sveca za proizvoljan datum (YYYY-MM-DD)",
@@ -1059,31 +1035,6 @@ fun SettingsScreen(
                                 screenState.saintLookupDate = LocalDate.now().toString()
                                 viewModel.resetSaintLookup(screenState.saintLookupDate)
                                 screenState.showSaintLookupDialog = true
-                            }
-                        )
-
-                        SettingsItem(
-                            icon = Icons.Default.Speed,
-                            title = "📈 FPS Monitor",
-                            subtitle = "Real-time FPS tracking (${if (com.youtube.rating.android.utils.FpsMonitor.isMonitoring()) "RADI" else "STOPIRAN"})",
-                            onClick = {
-                                if (com.youtube.rating.android.utils.FpsMonitor.isMonitoring()) {
-                                    val stats =
-                                        com.youtube.rating.android.utils.FpsMonitor.getFormattedStats()
-                                    com.youtube.rating.android.utils.FpsMonitor.stopMonitoring()
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        "FPS monitor stopiran\n$stats",
-                                        android.widget.Toast.LENGTH_LONG
-                                    ).show()
-                                } else {
-                                    com.youtube.rating.android.utils.FpsMonitor.startMonitoring()
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        "FPS monitoring pokrenut",
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
-                                }
                             }
                         )
 
@@ -1113,8 +1064,6 @@ fun SettingsScreen(
                             subtitle = "Isključi admin opcije i vrati se u normalan mod",
                             onClick = {
                                 com.youtube.rating.android.utils.StrictModeManager.disable()
-                                com.youtube.rating.android.utils.MemoryProfiler.stopMonitoring()
-                                com.youtube.rating.android.utils.FpsMonitor.stopMonitoring()
                                 adminManager.setAdminMode(false)
                                 android.widget.Toast.makeText(
                                     context,

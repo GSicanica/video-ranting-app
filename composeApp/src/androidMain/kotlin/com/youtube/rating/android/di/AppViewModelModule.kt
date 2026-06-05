@@ -16,7 +16,7 @@ import org.koin.dsl.module
 
 val appViewModelModule = module {
     viewModel {
-        PrayerViewModel(appContext = androidContext(), repo = get(), analyticsManager = get())
+        PrayerViewModel(appContext = androidContext(), repo = get())
     }
 
     viewModel {
@@ -83,7 +83,6 @@ val appViewModelModule = module {
         VideoDetailsDepsViewModel(
             apiClient = get(),
             userTokenManager = get(),
-            analyticsManager = get(),
             youTubeInfoService = get(),
             watchHistoryRepository = get(),
         )

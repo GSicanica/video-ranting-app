@@ -46,6 +46,4 @@ interface HomeContentSource {
         userToken: String,
         reason: String = "inappropriate"
     ): ApiResponse
-
-    suspend fun trackSearchTerm(term: String, language: String = "unknown"): ApiResponse
 }

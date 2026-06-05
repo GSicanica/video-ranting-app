@@ -17,7 +17,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +25,6 @@ import com.youtube.rating.android.data.settings.SettingsRepository
 import com.youtube.rating.android.data.prefs.TrainingPrefs
 import com.youtube.rating.android.localization.ContentLanguageManager
 import com.youtube.rating.android.localization.Strings
-import com.youtube.rating.android.sentry.SentryLogger
 import com.youtube.rating.android.utils.BibleApiService
 import com.youtube.rating.android.utils.BibleQuoteGenerator
 import com.youtube.rating.android.viewmodel.AppViewModel
@@ -36,20 +34,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-
-internal fun normalizeRouteForMetrics(route: String?): String {
-    if (route.isNullOrBlank()) return "unknown"
-    return if (route.startsWith("rate/")) "rate" else route
-}
-
-internal fun trackScreenDurationMetric(screen: String, durationMs: Long) {
-    if (durationMs <= 0L) return
-    SentryLogger.metricDistribution(
-        "screen_time_ms",
-        durationMs.toDouble(),
-        tags = mapOf("screen" to screen)
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +46,6 @@ fun RatingApp(
     val isTrainingTab = isTrainingRoute(currentRoute)
     val drawerGesturesEnabled = true
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     // ✅ App-level state moved to AppViewModel
     val appViewModel: AppViewModel = koinViewModel()
@@ -129,7 +112,6 @@ fun RatingApp(
         currentLanguage = currentLanguage,
         selectedContentLanguages = selectedContentLanguages
     )
-    ScreenMetricsTracker(currentRoute = currentRoute, lifecycleOwner = lifecycleOwner)
     IntentRouter(
         initialIntent = initialIntent,
         currentIntent = currentIntent,

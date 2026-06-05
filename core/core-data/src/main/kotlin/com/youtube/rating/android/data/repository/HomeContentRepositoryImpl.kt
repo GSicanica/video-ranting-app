@@ -64,8 +64,4 @@ class HomeContentRepositoryImpl(
     override suspend fun reportVideo(videoId: String, userToken: String, reason: String): ApiResponse {
         return source.reportVideo(videoId, userToken, reason)
     }
-
-    override suspend fun trackSearchTerm(term: String, language: String): ApiResponse {
-        return source.trackSearchTerm(term, language)
-    }
 }

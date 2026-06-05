@@ -34,5 +34,4 @@ interface HomeContentRepository : HomeContentGateway {
     ): PaginatedSearchResponse
 
     override suspend fun reportVideo(videoId: String, userToken: String, reason: String): ApiResponse
-    override suspend fun trackSearchTerm(term: String, language: String): ApiResponse
 }

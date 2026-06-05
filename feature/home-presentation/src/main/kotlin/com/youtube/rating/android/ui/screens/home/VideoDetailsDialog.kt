@@ -93,7 +93,6 @@ import com.youtube.rating.android.storage.WatchHistoryEntry
 import com.youtube.rating.android.storage.WatchHistoryManager
 import com.youtube.rating.android.ui.screens.YouTubePlayerEmbed
 import com.youtube.rating.android.util.formatRelativeTime
-import com.youtube.rating.android.utils.AnalyticsManager
 import com.youtube.rating.android.utils.CompactRatingBadge
 import com.youtube.rating.android.utils.DailyActionLimiter
 import com.youtube.rating.android.utils.ThumbnailHelper
